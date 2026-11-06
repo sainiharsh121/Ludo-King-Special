@@ -50,9 +50,14 @@ Version 1.2 delivers major gameplay dynamics, visual refinements, competitive fa
   - `logo_gold_pin.svg`: Gold Pin (Four-color header token pin on navy board watermark).
 - **Capacitor & Android Config:** Synchronized `capacitor.config.json` and `strings.xml` with `appName` set to **"Ludo"**.
 - **Classic Mode Home Corridor Entry Correction:** Fixed `mustCaptureToEnterHome` to `false` for Classic Mode (`PassNPlayClassicSetupScreen`, `PassNPlayTeamUpSetupScreen`, `App.tsx`, and `SetupModal`). Tokens in Classic can now enter their colored home column directly without needing a prior kill/capture (mandatory kill restriction now correctly restricted only to Quick Game mode).
-- **Token Color Visibility & Yard Socket Resizing:**
-  - **Inner Token Circle Enlarged:** Pin token's central colored circle radius increased from `r=5` to `r=7.2` (nearly 2x colored area), allowing all 9 custom player colors (Gold, Pink, Black, Blue, Green, etc.) to be clearly and vividly distinguishable.
-  - **Board Yard Socket Circles Sized Down:** The 4 outer socket circles in the yard base reduced from `28px/32px` (`w-7 h-7 sm:w-8 sm:h-8`) to `21px/25px` (`w-[21px] h-[21px] sm:w-[25px] sm:h-[25px]`), giving clean breathing room inside the yard and eliminating clutter.
+- **Primary Color Palette Refinement:**
+  - **Red:** Updated to pure `#ff0000` (`rgb(255,0,0)`).
+  - **Yellow:** Updated to pure `#ffff00` (`rgb(255,255,0)`).
+  - **Green:** Updated to pure `#008000` (`rgb(0,128,0)`).
+- **Token Alignment & Cell Geometry Bounds:**
+  - Token size scaled to `18px × 23px` (`sm: 21px × 26px`) on board tracks. Pin teardrop body and needle tip remain strictly within the 1x1 grid cell boundary with clean padding, completely eliminating border overflow.
+- **Android APK Launcher Icons Generated:**
+  - Generated all native Android launcher icons (`ic_launcher.png`, `ic_launcher_round.png`, `ic_launcher_foreground.png`) across all mipmap densities (`mipmap-mdpi`, `mipmap-hdpi`, `mipmap-xhdpi`, `mipmap-xxhdpi`, `mipmap-xxxhdpi`) from the official Ludo vector logo, ensuring APK builds show the custom logo on phone home screens.
 
 ---
 

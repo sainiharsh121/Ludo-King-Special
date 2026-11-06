@@ -12,15 +12,15 @@
   --base-inner:        #FFFFFF;  /* white box inside each base, 2px Dark border   */
 
   /* seats (home column, base quadrant, token dot) */
-  --seat-red:          #b21919;  /* 5.4:1 on silver - unchanged                   */
+  --seat-red:          #ff0000;  /* Red: rgb(255,0,0)                             */
   --seat-blue:         #3a72db;  /* 3.6:1 on silver - unchanged                   */
   --seat-purple:       #af27d7;  /* 4.0:1 on silver - unchanged                   */
-  --seat-green:        #45901A;  /* CHANGED from #7dc929 (1.6:1) -> 3.1:1, same hue */
-  --seat-purple-tint:  #ff69b4;  /* Pink: rgb(255,105,180) replacing lavender */
+  --seat-green:        #008000;  /* Green: rgb(0,128,0)                           */
+  --seat-purple-tint:  #ff69b4;  /* Pink: rgb(255,105,180) replacing lavender     */
 
   /* UI accents (never seat colours, never on silver without a Dark border) */
   --accent-gold:       #ffd700;  /* rgb(255, 215, 0) gold color: buttons (Rematch, Save), turn glow, winner */
-  --accent-yellow:     #e6cc46;  /* move-hint markers, selected-token ring          */
+  --accent-yellow:     #ffff00;  /* Yellow: rgb(255,255,0)                        */
 
   /* tokens */
   --token-body:        #FFFFFF;

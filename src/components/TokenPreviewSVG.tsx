@@ -60,12 +60,12 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
   {
     id: 'crimson-red',
     name: 'Red',
-    hex: '#b21919',
-    accent: '#e11d48',
-    glow: 'shadow-[0_0_12px_rgba(178,25,25,0.65)]',
-    bgGrad: 'from-[#b21919]/35 via-[#b21919]/15 to-[#3b3c36]/60',
-    borderColor: 'border-[#b21919]',
-    textColor: 'text-[#ef4444]',
+    hex: '#ff0000',
+    accent: '#ff4d4d',
+    glow: 'shadow-[0_0_12px_rgba(255,0,0,0.65)]',
+    bgGrad: 'from-[#ff0000]/35 via-[#ff0000]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#ff0000]',
+    textColor: 'text-[#ff0000]',
   },
   {
     id: 'royal-blue',
@@ -90,22 +90,22 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
   {
     id: 'lemon-yellow',
     name: 'Yellow',
-    hex: '#e6cc46',
-    accent: '#fef08a',
-    glow: 'shadow-[0_0_12px_rgba(230,204,70,0.65)]',
-    bgGrad: 'from-[#e6cc46]/35 via-[#e6cc46]/15 to-[#3b3c36]/60',
-    borderColor: 'border-[#e6cc46]',
-    textColor: 'text-[#e6cc46]',
+    hex: '#ffff00',
+    accent: '#ffff66',
+    glow: 'shadow-[0_0_12px_rgba(255,255,0,0.65)]',
+    bgGrad: 'from-[#ffff00]/35 via-[#ffff00]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#ffff00]',
+    textColor: 'text-[#ffff00]',
   },
   {
     id: 'lime-green',
     name: 'Green',
-    hex: '#45901A',
-    accent: '#45901A',
-    glow: 'shadow-[0_0_12px_rgba(69,144,26,0.65)]',
-    bgGrad: 'from-[#45901A]/35 via-[#45901A]/15 to-[#3b3c36]/60',
-    borderColor: 'border-[#45901A]',
-    textColor: 'text-[#45901A]',
+    hex: '#008000',
+    accent: '#00b300',
+    glow: 'shadow-[0_0_12px_rgba(0,128,0,0.65)]',
+    bgGrad: 'from-[#008000]/35 via-[#008000]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#008000]',
+    textColor: 'text-[#008000]',
   },
   {
     id: 'vivid-purple',
@@ -144,16 +144,16 @@ export const getCanonicalFamily = (colorStr?: string): PlayerColor | null => {
     if (found.name === 'Red') return 'RED';
     if (found.name === 'Yellow' || found.name === 'Gold') return 'YELLOW';
   }
-  if (s.includes('green') || s === '#45901a' || s === '#7dc929' || s === '#16a34a' || s === '#22c55e') {
+  if (s.includes('green') || s === '#008000' || s === '#45901a' || s === '#7dc929' || s === '#16a34a' || s === '#22c55e') {
     return 'GREEN';
   }
   if (s.includes('blue') || s === '#3a72db' || s === '#2563eb' || s === '#0284c7' || s === '#60a5fa') {
     return 'BLUE';
   }
-  if (s.includes('red') || s === '#b21919' || s === '#ef4444' || s === '#dc2626') {
+  if (s.includes('red') || s === '#ff0000' || s === '#b21919' || s === '#ef4444' || s === '#dc2626') {
     return 'RED';
   }
-  if (s.includes('yellow') || s.includes('gold') || s === '#ffd700' || s === '#ecae02' || s === '#e6cc46' || s === '#facc15' || s === '#eab308') {
+  if (s.includes('yellow') || s.includes('gold') || s === '#ffff00' || s === '#ffd700' || s === '#ecae02' || s === '#e6cc46' || s === '#facc15' || s === '#eab308') {
     return 'YELLOW';
   }
   return null;
