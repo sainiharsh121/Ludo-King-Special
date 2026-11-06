@@ -576,6 +576,9 @@ export const App: React.FC = () => {
       isHopping: false,
     });
 
+    // Brief frame pause so browser renders initial position before CSS transition starts
+    await new Promise(res => setTimeout(res, 25));
+
     // Traverse each cell along the trajectory
     for (let i = 0; i < stepPath.length; i++) {
       const targetCoord = stepPath[i];
@@ -1382,6 +1385,7 @@ export const App: React.FC = () => {
               jumpIconIndices={jumpIconIndices}
               movablePlayerId={getControllingPlayer(activePlayer, players, gameMode).id}
               selectedTokenId={selectedToken}
+              pawnSpeedMs={rules.pawnSpeedMs}
             />
 
             {/* Bottom HUDs: Blue (Bottom-Left) & Yellow (Bottom-Right) */}

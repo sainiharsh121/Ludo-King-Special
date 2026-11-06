@@ -27,6 +27,7 @@ interface LudoBoardProps {
   jumpIconIndices?: number[];
   movablePlayerId?: string;
   selectedTokenId?: TokenId;
+  pawnSpeedMs?: number;
 }
 
 export const LudoBoard: React.FC<LudoBoardProps> = ({
@@ -42,6 +43,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
   jumpIconIndices = [],
   movablePlayerId,
   selectedTokenId,
+  pawnSpeedMs = 310,
 }) => {
   // Quadrant visual configurations dynamically derived from player choices.
   // In 2-player (or 3-player) matches, if active players pick colors like Green or Blue,
@@ -858,18 +860,21 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   zIndex: 60,
                   transition: animatingPawn.isRewinding
                     ? 'left 40ms linear, top 40ms linear'
-                    : 'left 310ms ease-out, top 310ms ease-out',
+                    : `left ${pawnSpeedMs}ms ease-out, top ${pawnSpeedMs}ms ease-out`,
                 }}
-                className={`absolute pointer-events-none ${
-                  !animatingPawn.isRewinding && animatingPawn.isHopping ? 'pawn-hop' : ''
-                }`}
+                className="absolute pointer-events-none"
               >
-                <TokenPreviewSVG
-                  tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
-                  color={animatingPawn.color}
-                  customHex={animPlayer?.tokenColorHex || animHex}
-                  className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
-                />
+                <div
+                  key={`${animatingPawn.coord.row}-${animatingPawn.coord.col}`}
+                  className={!animatingPawn.isRewinding && animatingPawn.isHopping ? 'pawn-hop' : ''}
+                >
+                  <TokenPreviewSVG
+                    tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
+                    color={animatingPawn.color}
+                    customHex={animPlayer?.tokenColorHex || animHex}
+                    className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
+                  />
+                </div>
               </div>
             );
           })()}

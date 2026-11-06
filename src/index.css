@@ -247,24 +247,24 @@
   animation: arrowBounce 0.6s ease-in-out infinite;
 }
 
-/* Token Step Hop Animation */
+/* Token Step Hop Animation (applied to inner wrapper to preserve outer cell centering) */
 @keyframes hopStep {
   0% {
-    transform: scale(1, 1) translateY(0);
+    transform: translateY(0) scale(1, 1);
   }
-  30% {
-    transform: scale(0.9, 1.25) translateY(-12px);
+  35% {
+    transform: translateY(-8px) scale(0.92, 1.15);
   }
   70% {
-    transform: scale(1.1, 0.85) translateY(0);
+    transform: translateY(0) scale(1.05, 0.92);
   }
   100% {
-    transform: scale(1, 1) translateY(0);
+    transform: translateY(0) scale(1, 1);
   }
 }
 
 .pawn-hop {
-  animation: hopStep 0.38s ease-in-out;
+  animation: hopStep 0.31s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Capture shockwave burst */
