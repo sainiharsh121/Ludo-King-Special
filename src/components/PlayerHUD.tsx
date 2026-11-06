@@ -78,17 +78,17 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                 stroke="var(--token-outline)"
                 strokeWidth="1.5"
               />
-              {/* Inner colored circular gem in seat colour */}
+              {/* Inner colored circular gem in seat colour (enlarged for color clarity) */}
               <circle
                 cx="12"
                 cy="12"
-                r="5"
+                r="7.2"
                 fill={activeColorHex}
                 stroke="var(--token-outline)"
                 strokeWidth="0.8"
               />
               {/* Shiny glossy specular highlight */}
-              <circle cx="10" cy="10" r="1.5" fill="var(--token-body)" opacity="0.9" />
+              <circle cx="9.8" cy="9.8" r="1.8" fill="var(--token-body)" opacity="0.85" />
             </svg>
 
             {/* Rank Trophy Badge if Finished */}

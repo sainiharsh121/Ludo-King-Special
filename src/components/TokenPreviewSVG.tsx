@@ -409,10 +409,10 @@ export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
             stroke={P.CHARCOAL}
             strokeWidth="1.8"
           />
-          {/* Center color dot in active color */}
-          <circle cx="12" cy="12" r="5" fill={activeFill} stroke={P.CHARCOAL} strokeWidth="0.6" />
+          {/* Center color dot in active color (enlarged for vivid color clarity) */}
+          <circle cx="12" cy="12" r="7.2" fill={activeFill} stroke={P.CHARCOAL} strokeWidth="0.8" />
           {/* Highlight specular dot */}
-          <circle cx="10" cy="10" r="1.5" fill={P.WHITE_SILVER} opacity="0.9" />
+          <circle cx="9.8" cy="9.8" r="1.8" fill={P.WHITE_SILVER} opacity="0.85" />
         </svg>
       );
   }

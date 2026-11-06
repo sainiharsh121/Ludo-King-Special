@@ -326,12 +326,12 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                       <circle
                         cx="12"
                         cy="12"
-                        r="5"
+                        r="7.2"
                         fill={seatColor}
                         stroke="var(--token-outline)"
                         strokeWidth="0.8"
                       />
-                      <circle cx="10" cy="10" r="1.5" fill="var(--token-body)" opacity="0.9" />
+                      <circle cx="9.8" cy="9.8" r="1.8" fill="var(--token-body)" opacity="0.85" />
                     </svg>
 
                     <div className="flex flex-col min-w-0">

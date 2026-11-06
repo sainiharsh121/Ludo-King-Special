@@ -225,7 +225,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
             onPawnClick(idx);
           }
         }}
-        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full shadow-inner flex items-center justify-center border-2 relative transition-transform ${
+        className={`w-[21px] h-[21px] sm:w-[25px] sm:h-[25px] rounded-full shadow-inner flex items-center justify-center border-[1.5px] relative transition-transform ${
           isLegal ? 'cursor-pointer hover:scale-110 active:scale-95' : ''
         }`}
         style={{

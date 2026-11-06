@@ -299,7 +299,8 @@ export const PassNPlaySetupScreen: React.FC<PassNPlaySetupScreenProps> = ({
                       stroke="#0284c7"
                       strokeWidth="2"
                     />
-                    <circle cx="12" cy="12" r="4.5" fill="#38bdf8" />
+                    <circle cx="12" cy="12" r="7.2" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
+                    <circle cx="9.8" cy="9.8" r="1.8" fill="#ffffff" opacity="0.85" />
                   </svg>
                 </div>
               </div>

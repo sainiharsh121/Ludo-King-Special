@@ -199,9 +199,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 
         {/* Bottom Details / Version */}
         <div className="flex flex-col items-center text-center gap-0.5 text-[10px] text-slate-400 drop-shadow">
-          <p className="font-bold flex items-center gap-1 text-slate-300">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            Ludo™ • Official Pass & Play Edition
+          <p className="font-bold flex items-center gap-1.5 text-slate-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Ludo™ • Official Pass & Play Edition</span>
+            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-mono">v1.2.5</span>
           </p>
           <p className="text-slate-400 text-[9px]">
             Tap anywhere on screen to enter the arena
