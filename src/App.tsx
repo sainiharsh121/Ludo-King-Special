@@ -24,6 +24,7 @@ import { PassNPlayTeamUpSetupScreen } from './components/PassNPlayTeamUpSetupScr
 import { TeamUpTaskSelectionScreen } from './components/TeamUpTaskSelectionScreen';
 import { MobileFrame } from './components/MobileFrame';
 import { soundEngine } from './utils/soundEngine';
+import confetti from 'canvas-confetti';
 import { 
   getLegalPawns, 
   calculateMoveOutcome, 
@@ -993,6 +994,18 @@ export const App: React.FC = () => {
 
   // Handle direct rematch with same players, avatars, colors and rules
   const handleRematch = () => {
+    try {
+      confetti.reset();
+    } catch {}
+    if (typeof document !== 'undefined') {
+      const canvases = document.querySelectorAll('canvas');
+      canvases.forEach(c => {
+        if (c.style.position === 'fixed' || c.style.pointerEvents === 'none') {
+          c.remove();
+        }
+      });
+    }
+
     const resetPlayers: Player[] = players.map(p => ({
       ...p,
       pawns: createPawns(p.color, rules.oneTokenOut),

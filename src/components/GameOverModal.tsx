@@ -121,6 +121,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 
     return () => {
       clearInterval(interval);
+      try {
+        confetti.reset();
+      } catch {}
     };
   }, [isOpen]);
 
@@ -216,7 +219,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
               className="text-2xl sm:text-3xl font-black tracking-wide drop-shadow select-none"
               style={{
                 color: 'var(--accent-gold)',
-                textShadow: '0 2px 4px rgba(0,0,0,0.85), 0 0 10px rgba(236,174,2,0.45)',
+                textShadow: '0 2px 4px rgba(0,0,0,0.85), 0 0 10px rgba(255,215,0,0.45)',
               }}
             >
               Congratulations!
@@ -370,6 +373,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             {/* Home / Menu Button */}
             <button
               onClick={() => {
+                try {
+                  confetti.reset();
+                } catch {}
                 soundEngine.playButtonClick();
                 if (onHome) onHome();
               }}
@@ -423,6 +429,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             {/* Rematch Button */}
             <button
               onClick={() => {
+                try {
+                  confetti.reset();
+                } catch {}
                 soundEngine.playButtonClick();
                 onRestart();
               }}

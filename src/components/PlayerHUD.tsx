@@ -49,7 +49,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
         }}
         className={`relative inline-flex items-center gap-1.5 sm:gap-2 rounded-2xl p-1 sm:p-1.5 transition-all duration-300 border-[2.5px] shadow-lg select-none ${
           isActiveTurn
-            ? 'border-[var(--accent-gold)] ring-2 ring-[var(--accent-gold)]/50 shadow-[0_4px_16px_rgba(236,174,2,0.35)] scale-[1.02] z-20 cursor-pointer'
+            ? 'border-[var(--accent-gold)] ring-2 ring-[var(--accent-gold)]/50 shadow-[0_4px_16px_rgba(255,215,0,0.35)] scale-[1.02] z-20 cursor-pointer'
             : 'border-slate-500/60 opacity-90 z-10'
         } ${isRight ? 'flex-row-reverse' : 'flex-row'}`}
         style={{

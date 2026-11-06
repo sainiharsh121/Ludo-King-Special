@@ -20,7 +20,7 @@
                                     never a path cell or a token                    */
 
   /* UI accents (never seat colours, never on silver without a Dark border) */
-  --accent-gold:       #ecae02;  /* buttons (Rematch, Save), turn glow, winner      */
+  --accent-gold:       #ffd700;  /* rgb(255, 215, 0) gold color: buttons (Rematch, Save), turn glow, winner */
   --accent-yellow:     #e6cc46;  /* move-hint markers, selected-token ring          */
 
   /* tokens */

@@ -87,6 +87,10 @@ assert(colorNames.includes('Yellow'));
 assert(colorNames.includes('Green'));
 assert(colorNames.includes('Purple'));
 assert(colorNames.includes('Dark'));
+const goldOption = NINE_TOKEN_COLORS.find(c => c.name === 'Gold');
+assert(goldOption !== undefined);
+assert.strictEqual(goldOption?.hex, '#ffd700');
+console.log('✅ PASS: Gold color updated to #ffd700 | rgb(255,215,0)');
 console.log('✅ PASS: 9 distinct color names present');
 
 // 5. Random color shuffling ensures distinct colors for all players
@@ -107,3 +111,4 @@ for (const skin of supportedSkins) {
 console.log('✅ PASS: All 5 token skins (pin, disc, hammer, top, ninja) assignable to player');
 
 console.log('🎉 ALL TOKEN SKINS & FROZEN CAPTURE TESTS PASSED WITH 100% SUCCESS!');
+

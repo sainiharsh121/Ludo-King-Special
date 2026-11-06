@@ -3,7 +3,7 @@ import { PlayerColor, TokenId } from '../types/ludo';
 
 /**
  * Authentic 9-Color Palette specified by user for Ludo Tokens:
- * 1. #ecae02 (Golden Yellow)
+ * 1. #ffd700 (Gold | rgb(255,215,0))
  * 2. #777777ff (Silver)
  * 3. #b21919 (Crimson Red)
  * 4. #3a72db (Royal Blue)
@@ -40,12 +40,12 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
   {
     id: 'amber-gold',
     name: 'Gold',
-    hex: '#ecae02',
-    accent: '#e6cc46',
-    glow: 'shadow-[0_0_12px_rgba(236,174,2,0.65)]',
-    bgGrad: 'from-[#ecae02]/35 via-[#ecae02]/15 to-[#2e2730]/60',
-    borderColor: 'border-[#ecae02]',
-    textColor: 'text-[#ecae02]',
+    hex: '#ffd700',
+    accent: '#ffe44d',
+    glow: 'shadow-[0_0_12px_rgba(255,215,0,0.65)]',
+    bgGrad: 'from-[#ffd700]/35 via-[#ffd700]/15 to-[#2e2730]/60',
+    borderColor: 'border-[#ffd700]',
+    textColor: 'text-[#ffd700]',
   },
   {
     id: 'platinum-silver',
@@ -153,7 +153,7 @@ export const getCanonicalFamily = (colorStr?: string): PlayerColor | null => {
   if (s.includes('red') || s === '#b21919' || s === '#ef4444' || s === '#dc2626') {
     return 'RED';
   }
-  if (s.includes('yellow') || s.includes('gold') || s === '#ecae02' || s === '#e6cc46' || s === '#facc15' || s === '#eab308') {
+  if (s.includes('yellow') || s.includes('gold') || s === '#ffd700' || s === '#ecae02' || s === '#e6cc46' || s === '#facc15' || s === '#eab308') {
     return 'YELLOW';
   }
   return null;
@@ -194,14 +194,14 @@ export const COLOR_CONFIG_PALETTE: Record<PlayerColor, {
   },
   YELLOW: {
     name: 'YELLOW',
-    fill: LUDO_TOKEN_PALETTE.YELLOW, // #ecae02
+    fill: LUDO_TOKEN_PALETTE.YELLOW, // #ffd700
     stroke: LUDO_TOKEN_PALETTE.CHARCOAL, // #2e2730
     highlight: LUDO_TOKEN_PALETTE.WHITE_SILVER, // #e4e4e4
     accent: LUDO_TOKEN_PALETTE.GOLD_ACCENT, // #e6cc46
-    glow: 'shadow-[0_0_15px_rgba(236,174,2,0.65)]',
-    textColor: 'text-[#ecae02]',
-    borderColor: 'border-[#ecae02]',
-    bgGrad: 'from-[#ecae02]/40 via-[#ecae02]/25 to-[#2e2730]/60',
+    glow: 'shadow-[0_0_15px_rgba(255,215,0,0.65)]',
+    textColor: 'text-[#ffd700]',
+    borderColor: 'border-[#ffd700]',
+    bgGrad: 'from-[#ffd700]/40 via-[#ffd700]/25 to-[#2e2730]/60',
   },
   BLUE: {
     name: 'BLUE',
