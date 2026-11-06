@@ -294,7 +294,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
     const finalPlayers = buildPlayers(oneTokenOut);
     const rules: GameRules = {
       openOnSixOnly: true,
-      mustCaptureToEnterHome: true,
+      mustCaptureToEnterHome: false,
       threeSixesForfeit: true,
       bonusOnCapture: true,
       bonusOnHomeReach: true,

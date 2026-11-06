@@ -154,7 +154,7 @@ Defined in [`src/types/ludo.ts`](file:///e:/ludo_new/src/types/ludo.ts) and conf
 ```typescript
 export interface GameRules {
   openOnSixOnly: boolean;          // true = 6 only | false = 1 or 6
-  mustCaptureToEnterHome: boolean; // true = must kill to enter home corridor
+  mustCaptureToEnterHome: boolean; // false in Classic (free entry); true in Quick Mode (must kill to enter)
   threeSixesForfeit: boolean;      // true = 3 consecutive sixes cancels turn
   bonusOnCapture: boolean;         // extra roll on capture
   bonusOnHomeReach: boolean;       // extra roll when pawn enters home

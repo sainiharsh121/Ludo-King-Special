@@ -49,6 +49,7 @@ Version 1.2 delivers major gameplay dynamics, visual refinements, competitive fa
   - `logo_night_diamond.svg`: Night Diamond (Midnight board diamond variant).
   - `logo_gold_pin.svg`: Gold Pin (Four-color header token pin on navy board watermark).
 - **Capacitor & Android Config:** Synchronized `capacitor.config.json` and `strings.xml` with `appName` set to **"Ludo"**.
+- **Classic Mode Home Corridor Entry Correction:** Fixed `mustCaptureToEnterHome` to `false` for Classic Mode (`PassNPlayClassicSetupScreen`, `PassNPlayTeamUpSetupScreen`, `App.tsx`, and `SetupModal`). Tokens in Classic can now enter their colored home column directly without needing a prior kill/capture (mandatory kill restriction now correctly restricted only to Quick Game mode).
 
 ---
 

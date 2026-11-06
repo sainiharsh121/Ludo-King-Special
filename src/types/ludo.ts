@@ -30,7 +30,7 @@ export type SafeZoneMode = 'standard' | 'exits_only' | 'none';
 
 export interface GameRules {
   openOnSixOnly: boolean; // true: 6 only, false: 1 or 6
-  mustCaptureToEnterHome: boolean; // standard Ludo King rule
+  mustCaptureToEnterHome: boolean; // Quick game rule (false in Classic; true in Quick Mode)
   threeSixesForfeit: boolean; // rolling three 6s forfeits turn
   bonusOnCapture: boolean; // extra roll upon capturing opponent
   bonusOnHomeReach: boolean; // extra roll upon reaching home

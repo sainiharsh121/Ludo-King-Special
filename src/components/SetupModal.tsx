@@ -40,7 +40,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
 
   const [rules, setRules] = useState<GameRules>({
     openOnSixOnly: gameMode !== 'QUICK_MODE',
-    mustCaptureToEnterHome: gameMode !== 'QUICK_MODE',
+    mustCaptureToEnterHome: gameMode === 'QUICK_MODE',
     threeSixesForfeit: true,
     bonusOnCapture: true,
     bonusOnHomeReach: true,
@@ -55,7 +55,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
     setRules(prev => ({
       ...prev,
       openOnSixOnly: gameMode !== 'QUICK_MODE',
-      mustCaptureToEnterHome: gameMode !== 'QUICK_MODE',
+      mustCaptureToEnterHome: gameMode === 'QUICK_MODE',
       pawnSpeedMs: gameMode === 'QUICK_MODE' ? 70 : 130,
     }));
     if (gameMode === 'TEAM_UP') {
@@ -279,7 +279,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                   onClick={() =>
                     setRules({
                       openOnSixOnly: true,
-                      mustCaptureToEnterHome: true,
+                      mustCaptureToEnterHome: false,
                       threeSixesForfeit: true,
                       bonusOnCapture: true,
                       bonusOnHomeReach: true,
@@ -323,7 +323,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                     <Swords className="w-4 h-4 text-rose-400" /> Mandatory Kill Requirement
                   </div>
                   <div className="text-xs text-slate-400">
-                    Must capture opponent before entering home column (Ludo King rule)
+                    Must capture opponent before entering home column (Quick game rule)
                   </div>
                 </div>
                 <button

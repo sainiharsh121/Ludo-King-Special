@@ -80,9 +80,10 @@
   - Permanent safe stars located at global track indices:
     - `0`, `8`, `13`, `21`, `26`, `34`, `39`, `47`.
   - Pawns on safe stars can never be captured by opponents. Multiple pawns (friend or foe) coexist safely on these tiles.
-- **Mandatory Capture Requirement (`mustCaptureToEnterHome`):**
-  - A player must have captured at least 1 opponent pawn during the match to unlock entry into their private home corridor.
-  - If a player has 0 captures, their pawns will bypass their home entrance turn and continue circulating the outer track until a capture is secured.
+- **Home Corridor Entry (`mustCaptureToEnterHome = false` in Classic):**
+  - In Classic Mode, tokens **do NOT require killing/capturing any opponent token** to enter their colored home column.
+  - A token can enter its colored home corridor freely whenever its dice roll lands on or enters steps `51` through `56`.
+  - *(Note: Mandatory capture before home corridor entry is exclusive to Quick Game Mode).*
 
 ---
 

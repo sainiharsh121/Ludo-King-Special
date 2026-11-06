@@ -290,7 +290,7 @@ export const App: React.FC = () => {
   const [rules, setRules] = useState<GameRules>(
     initialMatch?.rules || {
       openOnSixOnly: true,
-      mustCaptureToEnterHome: true,
+      mustCaptureToEnterHome: false,
       threeSixesForfeit: true,
       bonusOnCapture: true,
       bonusOnHomeReach: true,
@@ -1299,7 +1299,7 @@ export const App: React.FC = () => {
             if (!rulesToStart) {
               rulesToStart = {
                 openOnSixOnly: true,
-                mustCaptureToEnterHome: true,
+                mustCaptureToEnterHome: false,
                 threeSixesForfeit: true,
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,

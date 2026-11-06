@@ -140,18 +140,22 @@ console.log('--- TEST SUITE: Ludo Game Rules & Coordinates ---');
   assert(outcomeCapture.bonusReason === 'CAPTURE', 'Bonus reason is CAPTURE');
 }
 
-// 5. Mandatory Kill Requirement for Entering Home
+// 5. Kill Requirement Check (Quick Mode enforces kill, Classic Mode allows free entry)
 {
   const player = createPlayer('RED');
   player.pawns[0].step = 50; // At doorstep of corridor (step 51..55)
 
-  // Without capture, rolling 2 to reach step 52 is blocked
+  // Quick Mode rules (mustCaptureToEnterHome = true)
+  const quickRules: GameRules = { ...defaultRules, mustCaptureToEnterHome: true };
   player.hasCaptured = false;
-  assert(!canPawnMove(player, player.pawns[0], 2, defaultRules), 'Cannot enter home corridor without prior capture');
-
-  // With capture, entering corridor is allowed
+  assert(!canPawnMove(player, player.pawns[0], 2, quickRules), 'Quick Mode: Cannot enter home corridor without prior capture');
   player.hasCaptured = true;
-  assert(canPawnMove(player, player.pawns[0], 2, defaultRules), 'Can enter home corridor once capture requirement is satisfied');
+  assert(canPawnMove(player, player.pawns[0], 2, quickRules), 'Quick Mode: Can enter home corridor once capture requirement is satisfied');
+
+  // Classic Mode rules (mustCaptureToEnterHome = false)
+  const classicRules: GameRules = { ...defaultRules, mustCaptureToEnterHome: false };
+  player.hasCaptured = false;
+  assert(canPawnMove(player, player.pawns[0], 2, classicRules), 'Classic Mode: Can enter home corridor freely without any prior kill/capture');
 }
 
 // 6. Exact Roll to Reach Home (Step 56)

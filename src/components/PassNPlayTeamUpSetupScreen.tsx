@@ -287,7 +287,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
     const finalPlayers = buildTeamUpPlayers(oneTokenOut);
     const rules: GameRules = {
       openOnSixOnly: true,
-      mustCaptureToEnterHome: true,
+      mustCaptureToEnterHome: false,
       threeSixesForfeit: true,
       bonusOnCapture: true,
       bonusOnHomeReach: true,
