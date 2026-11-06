@@ -45,7 +45,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
     bonusOnCapture: true,
     bonusOnHomeReach: true,
     safeZoneMode: 'standard',
-    pawnSpeedMs: gameMode === 'QUICK_MODE' ? 100 : 210,
+    pawnSpeedMs: gameMode === 'QUICK_MODE' ? 70 : 130,
     autoMoveSingleLegal: true,
   });
 
@@ -56,7 +56,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
       ...prev,
       openOnSixOnly: gameMode !== 'QUICK_MODE',
       mustCaptureToEnterHome: gameMode === 'QUICK_MODE',
-      pawnSpeedMs: gameMode === 'QUICK_MODE' ? 100 : 210,
+      pawnSpeedMs: gameMode === 'QUICK_MODE' ? 70 : 130,
     }));
     if (gameMode === 'TEAM_UP') {
       setPlayerCount(4);
@@ -284,7 +284,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                       bonusOnCapture: true,
                       bonusOnHomeReach: true,
                       safeZoneMode: 'standard',
-                      pawnSpeedMs: 210,
+                      pawnSpeedMs: 130,
                       autoMoveSingleLegal: true,
                     })
                   }
@@ -391,19 +391,19 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                 <div>
                   <div className="text-sm font-black text-slate-100">Animation Hop Speed</div>
                   <div className="text-xs text-slate-400">
-                    {rules.pawnSpeedMs === 210 ? 'Normal (smooth hops)' : 'Turbo Fast (quick matches)'}
+                    {rules.pawnSpeedMs === 130 ? 'Normal (smooth hops)' : 'Turbo Fast (quick matches)'}
                   </div>
                 </div>
                 <button
                   onClick={() =>
                     setRules(r => ({
                       ...r,
-                      pawnSpeedMs: r.pawnSpeedMs === 210 ? 100 : 210,
+                      pawnSpeedMs: r.pawnSpeedMs === 130 ? 70 : 130,
                     }))
                   }
                   className="px-3 py-1.5 rounded-xl text-xs font-black bg-slate-800 border border-slate-700 text-slate-200"
                 >
-                  {rules.pawnSpeedMs === 210 ? '1x Normal' : '2x Turbo'}
+                  {rules.pawnSpeedMs === 130 ? '1x Normal' : '2x Turbo'}
                 </button>
               </div>
             </div>

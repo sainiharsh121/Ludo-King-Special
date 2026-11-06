@@ -43,7 +43,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
   jumpIconIndices = [],
   movablePlayerId,
   selectedTokenId,
-  pawnSpeedMs = 210,
+  pawnSpeedMs = 130,
 }) => {
   // Quadrant visual configurations dynamically derived from player choices.
   // In 2-player (or 3-player) matches, if active players pick colors like Green or Blue,
@@ -860,7 +860,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   zIndex: 60,
                   transition: animatingPawn.isRewinding
                     ? 'left 40ms linear, top 40ms linear'
-                    : `left ${pawnSpeedMs}ms ease-out, top ${pawnSpeedMs}ms ease-out`,
+                    : `left ${pawnSpeedMs}ms cubic-bezier(0.25, 1, 0.5, 1), top ${pawnSpeedMs}ms cubic-bezier(0.25, 1, 0.5, 1)`,
                 }}
                 className="absolute pointer-events-none"
               >
