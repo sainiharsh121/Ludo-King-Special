@@ -296,7 +296,7 @@ export const App: React.FC = () => {
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 120,
+      pawnSpeedMs: 180,
       autoMoveSingleLegal: true,
       freezeStarsEnabled: true,
       jumpIconEnabled: true,
@@ -753,7 +753,7 @@ export const App: React.FC = () => {
 
       // Landed safely back into its dedicated yard base socket
       soundEngine.playPawnUnlock();
-      await new Promise(res => setTimeout(res, rules.pawnSpeedMs || 120));
+      await new Promise(res => setTimeout(res, rules.pawnSpeedMs || 180));
 
       // Reset captured victim pawn in players state
       updatedPlayers = updatedPlayers.map(p => {
@@ -982,7 +982,7 @@ export const App: React.FC = () => {
         );
         setTimeout(() => {
           animateAndApplyMove(legalPawns[0].id, roll);
-        }, 120);
+        }, 180);
       } else {
         // Multiple pawns can move, let the player select
         setLegalPawnIds(legalPawns.map(p => p.id));
@@ -1374,7 +1374,7 @@ export const App: React.FC = () => {
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,
                 safeZoneMode: 'standard',
-                pawnSpeedMs: 120,
+                pawnSpeedMs: 180,
                 autoMoveSingleLegal: true,
                 friendlyKill: true,
                 oneTokenOut: false,
