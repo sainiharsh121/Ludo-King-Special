@@ -295,7 +295,7 @@ export const App: React.FC = () => {
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 130,
+      pawnSpeedMs: 80,
       autoMoveSingleLegal: true,
       freezeStarsEnabled: true,
       jumpIconEnabled: true,
@@ -1345,7 +1345,7 @@ export const App: React.FC = () => {
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,
                 safeZoneMode: 'standard',
-                pawnSpeedMs: 130,
+                pawnSpeedMs: 80,
                 autoMoveSingleLegal: true,
                 friendlyKill: true,
                 oneTokenOut: false,
@@ -1446,7 +1446,7 @@ export const App: React.FC = () => {
 
           </main>
 
-          {/* Reference Image Matching Dots Indicator with 3-Dot Menu on Left */}
+          {/* Glassmorphic Mode Badge with 3-Dot Menu on Left */}
           <footer className="w-full relative flex items-center justify-center py-1.5 px-2.5 mt-auto min-h-[44px]">
             {/* 3-Dot Button on Left Side of Bottom */}
             <div className="absolute left-2.5 bottom-1 z-30">
@@ -1490,18 +1490,20 @@ export const App: React.FC = () => {
               )}
             </div>
 
-            {/* Center Turn Dots Indicator */}
-            <div className="flex items-center gap-1.5">
-              {[0, 1, 2, 3, 4, 5].map(idx => (
-                <span
-                  key={idx}
-                  className={`rounded-full transition-all ${
-                    idx === activePlayerIndex
-                      ? 'w-2 h-2 bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.9)]'
-                      : 'w-1.5 h-1.5 bg-sky-200/40'
-                  }`}
-                />
-              ))}
+            {/* Center Bottom Glassmorphic Mode Badge (Replacing dots indicator) */}
+            <div className="flex items-center justify-center pointer-events-none select-none">
+              <div className="px-4 py-1.5 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.45)] flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse" />
+                <span className="text-xs font-black tracking-widest uppercase text-amber-300 drop-shadow-sm">
+                  {gameMode === 'PASS_N_PLAY'
+                    ? 'Classic'
+                    : gameMode === 'TEAM_UP'
+                    ? 'Team Up'
+                    : gameMode === 'QUICK_MODE'
+                    ? 'Quick'
+                    : 'Vs Computer'}
+                </span>
+              </div>
             </div>
           </footer>
 

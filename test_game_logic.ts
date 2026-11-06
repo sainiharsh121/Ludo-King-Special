@@ -43,7 +43,7 @@ const defaultRules: GameRules = {
   bonusOnCapture: true,
   bonusOnHomeReach: true,
   safeZoneMode: 'standard',
-  pawnSpeedMs: 130,
+  pawnSpeedMs: 80,
   autoMoveSingleLegal: true,
 };
 

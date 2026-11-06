@@ -43,7 +43,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
   jumpIconIndices = [],
   movablePlayerId,
   selectedTokenId,
-  pawnSpeedMs = 130,
+  pawnSpeedMs = 80,
 }) => {
   // Quadrant visual configurations dynamically derived from player choices.
   // In 2-player (or 3-player) matches, if active players pick colors like Green or Blue,

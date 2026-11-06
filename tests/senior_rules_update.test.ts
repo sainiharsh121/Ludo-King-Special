@@ -22,7 +22,7 @@ const baseRules: GameRules = {
   bonusOnCapture: true,
   bonusOnHomeReach: true,
   safeZoneMode: 'standard',
-  pawnSpeedMs: 130,
+  pawnSpeedMs: 80,
   autoMoveSingleLegal: true,
   freezeStarsEnabled: true,
   jumpIconEnabled: true,
@@ -226,7 +226,7 @@ assert.strictEqual(finalTeamWinner, 'TEAM_A', 'Team A is declared the winner whe
 console.log('✅ PASS: Team victory is announced only when ALL tokens of both teammates reach home');
 
 // =========================================================================
-// 5. TOKEN HOPPING SPEED (130MS) & SMOOTH TRANSITION SYNCHRONIZATION
+// 5. TOKEN HOPPING SPEED (80MS) & SMOOTH TRANSITION SYNCHRONIZATION
 // =========================================================================
 const appTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/App.tsx'), 'utf8');
 const classicTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/components/PassNPlayClassicSetupScreen.tsx'), 'utf8');
@@ -235,30 +235,34 @@ const setupModalTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/component
 const ludoBoardTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/components/LudoBoard.tsx'), 'utf8');
 const indexCss = fs.readFileSync(path.resolve(process.cwd(), 'src/index.css'), 'utf8');
 
-// App.tsx: default pawnSpeedMs: 130
-assert.ok(appTsx.includes('pawnSpeedMs: 130'), 'App.tsx contains default pawnSpeedMs: 130');
+// App.tsx: default pawnSpeedMs: 80
+assert.ok(appTsx.includes('pawnSpeedMs: 80'), 'App.tsx contains default pawnSpeedMs: 80');
+assert.ok(!appTsx.includes('pawnSpeedMs: 130'), 'App.tsx does NOT contain outdated pawnSpeedMs: 130');
 assert.ok(!appTsx.includes('pawnSpeedMs: 210'), 'App.tsx does NOT contain outdated pawnSpeedMs: 210');
 
-// PassNPlayClassicSetupScreen.tsx: pawnSpeedMs: 130
-assert.ok(classicTsx.includes('pawnSpeedMs: 130'), 'PassNPlayClassicSetupScreen.tsx contains pawnSpeedMs: 130');
+// PassNPlayClassicSetupScreen.tsx: pawnSpeedMs: 80
+assert.ok(classicTsx.includes('pawnSpeedMs: 80'), 'PassNPlayClassicSetupScreen.tsx contains pawnSpeedMs: 80');
+assert.ok(!classicTsx.includes('pawnSpeedMs: 130'), 'PassNPlayClassicSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 130');
 assert.ok(!classicTsx.includes('pawnSpeedMs: 210'), 'PassNPlayClassicSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 210');
 
-// PassNPlayTeamUpSetupScreen.tsx: pawnSpeedMs: 130
-assert.ok(teamUpTsx.includes('pawnSpeedMs: 130'), 'PassNPlayTeamUpSetupScreen.tsx contains pawnSpeedMs: 130');
+// PassNPlayTeamUpSetupScreen.tsx: pawnSpeedMs: 80
+assert.ok(teamUpTsx.includes('pawnSpeedMs: 80'), 'PassNPlayTeamUpSetupScreen.tsx contains pawnSpeedMs: 80');
+assert.ok(!teamUpTsx.includes('pawnSpeedMs: 130'), 'PassNPlayTeamUpSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 130');
 assert.ok(!teamUpTsx.includes('pawnSpeedMs: 210'), 'PassNPlayTeamUpSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 210');
 
-// SetupModal.tsx: pawnSpeedMs 130 (normal) and 70 (turbo)
-assert.ok(setupModalTsx.includes('pawnSpeedMs: 130') || setupModalTsx.includes('? 70 : 130'), 'SetupModal.tsx has 130ms normal and 70ms turbo');
+// SetupModal.tsx: pawnSpeedMs 80 (normal) and 50 (turbo)
+assert.ok(setupModalTsx.includes('pawnSpeedMs: 80') || setupModalTsx.includes('? 50 : 80'), 'SetupModal.tsx has 80ms normal');
+assert.ok(!setupModalTsx.includes('pawnSpeedMs: 130'), 'SetupModal.tsx does NOT contain outdated 130ms speed');
 assert.ok(!setupModalTsx.includes('210'), 'SetupModal.tsx does NOT contain outdated 210ms speed');
 
-// LudoBoard.tsx: default pawnSpeedMs = 130 and cubic-bezier ease
-assert.ok(ludoBoardTsx.includes('pawnSpeedMs = 130'), 'LudoBoard.tsx has default prop pawnSpeedMs = 130');
+// LudoBoard.tsx: default pawnSpeedMs = 80 and cubic-bezier ease
+assert.ok(ludoBoardTsx.includes('pawnSpeedMs = 80'), 'LudoBoard.tsx has default prop pawnSpeedMs = 80');
 assert.ok(ludoBoardTsx.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'LudoBoard.tsx uses cubic-bezier(0.25, 1, 0.5, 1) ease');
 
 // index.css: .pawn-hop bounce keyframe duration synchronized
 assert.ok(indexCss.includes('.pawn-hop'), 'index.css defines .pawn-hop');
 assert.ok(indexCss.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'index.css uses cubic-bezier(0.25, 1, 0.5, 1)');
-console.log('✅ PASS: Token hopping speed (130ms) & smooth transition synchronized across all files');
+console.log('✅ PASS: Token hopping speed (80ms) & smooth transition synchronized across all files');
 
 console.log('🎉 ALL SENIOR DEVELOPER GAMEPLAY & TEAM UP RULES ACCEPTANCE TESTS PASSED!');
 
