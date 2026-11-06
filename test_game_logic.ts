@@ -6,10 +6,12 @@ import {
   getNextPlayerIndex,
   countActiveRemainingPlayers,
   createPawns,
-  checkTeamUpWinner
+  checkTeamUpWinner,
+  isPlayerFinished
 } from './src/utils/gameRulesEngine';
 import { 
   getPawnCoordinate, 
+  getStepPath,
   stepToGlobalIndex, 
   isSafeGlobalCell,
   GLOBAL_TRACK,
@@ -1420,6 +1422,77 @@ console.log('\n--- TEST SUITE: Dynamic Board Hazards (Freeze Stars & Jump Icon) 
       Math.random = origRandom;
     }
   }
+}
+
+// =========================================================================
+// Bug Fix Verification: Base Yard Unlock Direct Movement & Classic Turn Skip
+// =========================================================================
+console.log('\n--- TEST SUITE: Base Yard Unlock & Finished Player Turn Rules ---');
+{
+  // 1. Bug 1: Unlocking from base yard (-1 to 0) must NOT contain in-place socket bounce
+  const colors: PlayerColor[] = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
+  for (const c of colors) {
+    for (let pId = 0; pId < 4; pId++) {
+      const path = getStepPath(c, -1, 0, pId);
+      assert(path.length === 1, `${c} pawn ${pId}: unlock path length is exactly 1 (no in-place bounce)`);
+      const startCoord = getPawnCoordinate(c, 0, pId);
+      assert(path[0].row === startCoord.row && path[0].col === startCoord.col, `${c} pawn ${pId}: path targets start cell directly`);
+    }
+  }
+  console.log('✅ PASS: All 4 colors pawns unlock directly into step 0 without in-place yard bounce');
+
+  // 2. Bug 2: Classic Mode - Finished players strictly skipped in turn rotation
+  const classicPlayers: Player[] = [
+    createPlayer('RED', true),
+    createPlayer('GREEN', true),
+    createPlayer('YELLOW', true),
+    createPlayer('BLUE', true),
+  ];
+
+  // P0 (RED) finishes with all pawns home
+  classicPlayers[0].pawns = classicPlayers[0].pawns.map(p => ({ ...p, step: 56, isHome: true }));
+  classicPlayers[0].rank = 1;
+
+  assert(isPlayerFinished(classicPlayers[0], 'PASS_N_PLAY') === true, 'P0 is detected as finished');
+  // From P3 (BLUE), next player must skip P0 and go directly to P1 (GREEN)
+  assert(getNextPlayerIndex(classicPlayers, 3, 'PASS_N_PLAY') === 1, 'Classic: P3 passes to P1, strictly skipping finished P0');
+  // Even if P0 was current index, passing turn immediately moves to P1
+  assert(getNextPlayerIndex(classicPlayers, 0, 'PASS_N_PLAY') === 1, 'Classic: P0 immediately yields turn to P1');
+
+  // Even if rank is null, if all pawns are home, player is finished and skipped in Classic
+  const classicPlayersUnrankedFinished: Player[] = [
+    createPlayer('RED', true),
+    createPlayer('GREEN', true),
+    createPlayer('YELLOW', true),
+    createPlayer('BLUE', true),
+  ];
+  classicPlayersUnrankedFinished[0].pawns = classicPlayersUnrankedFinished[0].pawns.map(p => ({ ...p, step: 56, isHome: true }));
+  classicPlayersUnrankedFinished[0].rank = null; // rank not yet assigned
+  assert(isPlayerFinished(classicPlayersUnrankedFinished[0], 'PASS_N_PLAY') === true, 'All pawns home means finished even if rank is null');
+  assert(getNextPlayerIndex(classicPlayersUnrankedFinished, 3, 'PASS_N_PLAY') === 1, 'Classic: P3 skips unranked finished P0 to P1');
+  console.log('✅ PASS: Finished players in Classic mode are strictly skipped regardless of rank field assignment');
+
+  // 3. TEAM_UP Mode: Finished player (rank === null) is NOT skipped; rolls to help partner
+  const teamUpPlayers: Player[] = [
+    { ...createPlayer('BLUE', true), id: 'p-blue', team: 'TEAM_A' },
+    { ...createPlayer('RED', true), id: 'p-red', team: 'TEAM_B' },
+    { ...createPlayer('GREEN', true), id: 'p-green', team: 'TEAM_A' },
+    { ...createPlayer('YELLOW', true), id: 'p-yellow', team: 'TEAM_B' },
+  ];
+  // Blue finishes all tokens
+  teamUpPlayers[0].pawns = teamUpPlayers[0].pawns.map(p => ({ ...p, step: 56, isHome: true }));
+  teamUpPlayers[0].rank = null; // in TEAM_UP, individual rank stays null until team wins
+
+  // In TEAM_UP mode, Yellow (index 3) passes turn to Blue (index 0)
+  assert(getNextPlayerIndex(teamUpPlayers, 3, 'TEAM_UP') === 0, 'TEAM_UP: Yellow passes to finished Blue so Blue can roll for partner Green');
+  console.log('✅ PASS: Finished player in TEAM_UP mode retains turn rotation to help partner');
+
+  // 4. In 4P Classic, if P0 and P2 are finished, turns alternate strictly between P1 and P3
+  classicPlayers[2].pawns = classicPlayers[2].pawns.map(p => ({ ...p, step: 56, isHome: true }));
+  classicPlayers[2].rank = 2;
+  assert(getNextPlayerIndex(classicPlayers, 1, 'PASS_N_PLAY') === 3, 'P1 passes to P3 (skipping finished P2)');
+  assert(getNextPlayerIndex(classicPlayers, 3, 'PASS_N_PLAY') === 1, 'P3 passes to P1 (skipping finished P0)');
+  console.log('✅ PASS: Multiple finished players in Classic mode are properly skipped during turn rotation');
 }
 
 console.log('\n🎉 ALL UNIT & INTEGRATION TESTS PASSED CLEANLY!\n');

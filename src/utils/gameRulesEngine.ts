@@ -1,4 +1,4 @@
-import { Player, Pawn, GameRules, PlayerColor } from '../types/ludo';
+import { Player, Pawn, GameRules, PlayerColor, GameMode } from '../types/ludo';
 import { stepToGlobalIndex, isSafeGlobalCell } from './boardCoordinates';
 
 export interface MoveOutcome {
@@ -265,21 +265,41 @@ export function calculateMoveOutcome(
   };
 }
 
+// Check if a player has completed all their required tokens into home or assigned rank
+export function isPlayerFinished(player: Player, mode?: GameMode): boolean {
+  if (player.rank !== null) return true;
+  if (!player.pawns || player.pawns.length === 0) return false;
+  const tokensNeeded = mode === 'QUICK_MODE' ? 1 : 4;
+  const finishedCount = player.pawns.filter(p => p.isHome || p.step >= 56).length;
+  return finishedCount >= tokensNeeded;
+}
+
 // Get next eligible active player clockwise
-export function getNextPlayerIndex(players: Player[], currentIndex: number): number {
+// In Classic and other non-team modes: strictly skip any finished player!
+// In TEAM_UP mode: players continue rolling dice to assist their partner until the team wins
+export function getNextPlayerIndex(players: Player[], currentIndex: number, gameMode?: GameMode): number {
   const total = players.length;
   for (let i = 1; i <= total; i++) {
     const nextIdx = (currentIndex + i) % total;
-    if (players[nextIdx].rank === null && players[nextIdx].isActive) {
-      return nextIdx;
+    const candidate = players[nextIdx];
+    if (!candidate || !candidate.isActive) continue;
+
+    if (gameMode === 'TEAM_UP') {
+      if (candidate.rank === null) {
+        return nextIdx;
+      }
+    } else {
+      if (!isPlayerFinished(candidate, gameMode)) {
+        return nextIdx;
+      }
     }
   }
   return currentIndex;
 }
 
-// Check how many players have finished
-export function countActiveRemainingPlayers(players: Player[]): number {
-  return players.filter(p => p.isActive && p.rank === null).length;
+// Check how many players remain active and unfinished
+export function countActiveRemainingPlayers(players: Player[], mode?: GameMode): number {
+  return players.filter(p => p.isActive && !isPlayerFinished(p, mode)).length;
 }
 
 // Check winner for TEAM_UP (2v2) mode

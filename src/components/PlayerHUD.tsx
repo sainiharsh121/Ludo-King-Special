@@ -39,7 +39,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
   };
 
   const activeColorHex = player.tokenColorHex || DEFAULT_SEAT_VAR[player.color];
-  const isDiceTurn = isActiveTurn && phase === 'WAITING_ROLL';
+  const isDiceTurn = isActiveTurn && phase === 'WAITING_ROLL' && player.rank === null;
 
   return (
     <div className={`relative w-full flex items-center ${isRight ? 'justify-end' : 'justify-start'}`}>
@@ -118,7 +118,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
             boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.95), inset 0 -2px 4px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.25)',
           }}
         >
-          {isActiveTurn ? (
+          {isActiveTurn && player.rank === null ? (
             <div className="relative flex items-center justify-center">
               <Dice3D
                 value={diceValue}
@@ -128,11 +128,16 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                 accentColor={activeColorHex}
               />
             </div>
+          ) : player.rank !== null ? (
+            <div className="flex flex-col items-center justify-center text-center">
+              <Trophy className="w-5 h-5 drop-shadow" style={{ color: 'var(--accent-gold)' }} />
+              <span className="text-[9px] font-black" style={{ color: 'var(--accent-gold)' }}>RANK {player.rank}</span>
+            </div>
           ) : null}
         </div>
 
         {/* ================= 3. GOLDEN POINTER ARROW (Pointing at Active Dice) ================= */}
-        {isActiveTurn && (
+        {isActiveTurn && player.rank === null && (
           <div
             className={`absolute top-1/2 -translate-y-1/2 pointer-events-none z-30 ${
               isRight ? '-left-6 sm:-left-7 arrow-bounce-right' : '-right-6 sm:-right-7 arrow-bounce-left'

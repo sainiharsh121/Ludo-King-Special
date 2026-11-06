@@ -31,7 +31,8 @@ import {
   getNextPlayerIndex,
   countActiveRemainingPlayers,
   checkTeamUpWinner,
-  createPawns
+  createPawns,
+  isPlayerFinished
 } from './utils/gameRulesEngine';
 import { saveCurrentGame } from './utils/savedGamesEngine';
 import { 
@@ -504,9 +505,18 @@ export const App: React.FC = () => {
   // Turn announcement sound in Game screen
   useEffect(() => {
     if (currentScreen === 'GAME' && phase === 'WAITING_ROLL' && activePlayer) {
+      // In Classic and other non-team modes: if current active player is finished, immediately skip to next eligible player!
+      if (gameMode !== 'TEAM_UP' && isPlayerFinished(activePlayer, gameMode)) {
+        const nextIdx = getNextPlayerIndex(players, activePlayerIndex, gameMode);
+        if (nextIdx !== activePlayerIndex) {
+          setActivePlayerIndex(nextIdx);
+          setNotification(`${players[nextIdx].name}'s Turn`);
+          return;
+        }
+      }
       soundEngine.playTurnSound();
     }
-  }, [activePlayerIndex, phase, currentScreen]);
+  }, [activePlayerIndex, phase, currentScreen, gameMode, players, activePlayer]);
 
   // AI bot auto-play when in VS_COMPUTER mode
   useEffect(() => {
@@ -682,6 +692,9 @@ export const App: React.FC = () => {
 
     setPlayers(updatedPlayers);
 
+    const movingPlayerState = updatedPlayers.find(p => p.id === controllingPlayer.id);
+    const isMovingPlayerFinished = gameMode !== 'TEAM_UP' && !!movingPlayerState && isPlayerFinished(movingPlayerState, gameMode);
+
     // Play specific landing triggers for attacker
     if (outcome.fromStep === -1) {
       soundEngine.playPawnUnlock();
@@ -692,7 +705,12 @@ export const App: React.FC = () => {
       soundEngine.playSafeStarSound();
     } else if (finalReachedHome) {
       soundEngine.playHomeSound();
-      setNotification(`🏆 Token reached home! Bonus Roll!`);
+      if (isMovingPlayerFinished) {
+        soundEngine.playCelebrationRocketSound();
+        setNotification(`👑 ${controllingPlayer.name} finished Rank ${movingPlayerState?.rank ?? 1}!`);
+      } else {
+        setNotification(`🏆 Token reached home! Bonus Roll!`);
+      }
     }
 
     // Capture Rewind Animation: Victim token retraces exact path back to base
@@ -774,7 +792,7 @@ export const App: React.FC = () => {
         return;
       }
     } else {
-      const activeRemaining = countActiveRemainingPlayers(updatedPlayers);
+      const activeRemaining = countActiveRemainingPlayers(updatedPlayers, gameMode);
       if (activeRemaining <= 1) {
         const totalActive = updatedPlayers.filter(p => p.isActive).length;
         const finalPlayers = updatedPlayers.map(p => {
@@ -792,7 +810,8 @@ export const App: React.FC = () => {
     }
 
     // Determine Turn Progression
-    const seatCanEarnBonus = true; // Extra turns for 6, capture, or home reach apply
+    // In Classic and other non-team modes: a finished player CANNOT earn a bonus roll!
+    const seatCanEarnBonus = !isMovingPlayerFinished;
 
     if (outcome.bonusRoll && seatCanEarnBonus) {
       if (outcome.bonusReason === 'ROLL_SIX') {
@@ -824,7 +843,7 @@ export const App: React.FC = () => {
 
       setPlayers(thawedPlayers);
 
-      const nextIdx = getNextPlayerIndex(thawedPlayers, activePlayerIndex);
+      const nextIdx = getNextPlayerIndex(thawedPlayers, activePlayerIndex, gameMode);
       setActivePlayerIndex(nextIdx);
       setPhase('WAITING_ROLL');
       setNotification(`${thawedPlayers[nextIdx].name}'s Turn`);
@@ -834,6 +853,16 @@ export const App: React.FC = () => {
   // Handle Dice Roll
   const handleRollDice = async () => {
     if (phase !== 'WAITING_ROLL' || isRolling) return;
+
+    // Safety guard: in non-team modes, finished players must NEVER roll the dice!
+    if (gameMode !== 'TEAM_UP' && isPlayerFinished(activePlayer, gameMode)) {
+      const nextIdx = getNextPlayerIndex(players, activePlayerIndex, gameMode);
+      if (nextIdx !== activePlayerIndex) {
+        setActivePlayerIndex(nextIdx);
+        setNotification(`${players[nextIdx].name}'s Turn`);
+      }
+      return;
+    }
 
     matchRollsCountRef.current += 1;
 
@@ -929,7 +958,7 @@ export const App: React.FC = () => {
         );
 
         setTimeout(() => {
-          const nextIdx = getNextPlayerIndex(players, activePlayerIndex);
+          const nextIdx = getNextPlayerIndex(players, activePlayerIndex, gameMode);
           setActivePlayerIndex(nextIdx);
           setPhase('WAITING_ROLL');
           setNotification(`${players[nextIdx].name}'s Turn`);

@@ -347,8 +347,7 @@ export function getPawnCoordinate(color: PlayerColor, step: number, pawnId: numb
 export function getStepPath(color: PlayerColor, fromStep: number, toStep: number, pawnId: number): Coordinate[] {
   const path: Coordinate[] = [];
   if (fromStep === -1) {
-    // Exiting base into start tile
-    path.push(BASE_SOCKETS[color][pawnId]);
+    // Exiting base into start tile directly without in-place bounce inside yard socket
     path.push(getPawnCoordinate(color, 0, pawnId));
     return path;
   }
