@@ -269,7 +269,7 @@
 }
 
 .pawn-hop {
-  animation: hopStep 0.08s cubic-bezier(0.25, 1, 0.5, 1);
+  animation: hopStep 0.12s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Capture shockwave burst */
