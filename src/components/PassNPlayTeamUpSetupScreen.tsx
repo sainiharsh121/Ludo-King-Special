@@ -425,7 +425,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
                       customHex={playerColors.p1}
                       color="BLUE"
                       tokenType={selectedToken}
-                      className="w-5 h-6 group-hover:scale-110 transition-transform drop-shadow-sm"
+                      className="w-6 h-7 group-hover:scale-110 transition-transform drop-shadow-sm"
                     />
                     <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 border border-slate-950 flex items-center justify-center text-[8px] font-black text-slate-950 shadow">
                       🎨
@@ -471,7 +471,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
                       customHex={playerColors.p3}
                       color="GREEN"
                       tokenType={selectedToken}
-                      className="w-5 h-6 group-hover:scale-110 transition-transform drop-shadow-sm"
+                      className="w-6 h-7 group-hover:scale-110 transition-transform drop-shadow-sm"
                     />
                     <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 border border-slate-950 flex items-center justify-center text-[8px] font-black text-slate-950 shadow">
                       🎨
@@ -542,7 +542,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
                       customHex={playerColors.p2}
                       color="RED"
                       tokenType={selectedToken}
-                      className="w-5 h-6 group-hover:scale-110 transition-transform drop-shadow-sm"
+                      className="w-6 h-7 group-hover:scale-110 transition-transform drop-shadow-sm"
                     />
                     <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 border border-slate-950 flex items-center justify-center text-[8px] font-black text-slate-950 shadow">
                       🎨
@@ -588,7 +588,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
                       customHex={playerColors.p4}
                       color="YELLOW"
                       tokenType={selectedToken}
-                      className="w-5 h-6 group-hover:scale-110 transition-transform drop-shadow-sm"
+                      className="w-6 h-7 group-hover:scale-110 transition-transform drop-shadow-sm"
                     />
                     <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-400 border border-slate-950 flex items-center justify-center text-[8px] font-black text-slate-950 shadow">
                       🎨
@@ -810,11 +810,11 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
                     className={`p-1.5 rounded-xl bg-gradient-to-b ${colorOption.bgGrad} border-2 ${colorOption.borderColor} ${colorOption.glow} flex flex-col items-center justify-center gap-1 hover:scale-105 active:scale-95 transition-all duration-150 cursor-pointer shadow group`}
                     title={`Select ${colorOption.name} for ${activePlayerMeta.name}`}
                   >
-                    <div className="w-7 h-7 rounded-lg bg-white shadow-xs border border-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 rounded-lg bg-white shadow-xs border border-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <TokenPreviewSVG
                         customHex={colorOption.hex}
                         tokenType={selectedToken}
-                        className="w-4 h-5 drop-shadow-xs"
+                        className="w-5 h-6 drop-shadow-xs"
                       />
                     </div>
                     <span className={`text-[10px] font-black leading-tight ${colorOption.textColor}`}>

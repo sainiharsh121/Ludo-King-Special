@@ -243,7 +243,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               tokenType={config.player?.tokenId || selectedTokenId || 'pin'}
               color={color}
               customHex={config.player?.tokenColorHex || config.seatColor}
-              className="w-[18px] h-[24px] sm:w-[20px] sm:h-[26px] translate-y-[2.5px]"
+              className="w-[22px] h-[28px] sm:w-[25px] sm:h-[32px] translate-y-[1px]"
             />
           </div>
         )}
@@ -826,7 +826,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                         tokenType={item.player.tokenId || selectedTokenId || 'pin'}
                         color={item.player.color}
                         customHex={colorHex}
-                        className="w-[18px] h-[24px] sm:w-[20px] sm:h-[26px]"
+                        className="w-[22px] h-[28px] sm:w-[25px] sm:h-[32px]"
                       />
                     </div>
                   </div>
@@ -859,7 +859,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
                   color={animatingPawn.color}
                   customHex={animPlayer?.tokenColorHex || animHex}
-                  className="w-[18px] h-[24px] sm:w-[20px] sm:h-[26px]"
+                  className="w-[22px] h-[28px] sm:w-[25px] sm:h-[32px]"
                 />
               </div>
             );

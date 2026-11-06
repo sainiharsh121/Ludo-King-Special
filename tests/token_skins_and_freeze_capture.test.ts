@@ -82,15 +82,20 @@ assert(colorNames.includes('Gold'));
 assert(colorNames.includes('Silver'));
 assert(colorNames.includes('Red'));
 assert(colorNames.includes('Blue'));
-assert(colorNames.includes('Lavender'));
+assert(colorNames.includes('Pink'));
 assert(colorNames.includes('Yellow'));
 assert(colorNames.includes('Green'));
 assert(colorNames.includes('Purple'));
-assert(colorNames.includes('Dark'));
+assert(colorNames.includes('Black'));
 const goldOption = NINE_TOKEN_COLORS.find(c => c.name === 'Gold');
-assert(goldOption !== undefined);
 assert.strictEqual(goldOption?.hex, '#ffd700');
+const pinkOption = NINE_TOKEN_COLORS.find(c => c.name === 'Pink');
+assert.strictEqual(pinkOption?.hex, '#ff69b4');
+const blackOption = NINE_TOKEN_COLORS.find(c => c.name === 'Black');
+assert.strictEqual(blackOption?.hex, '#3b3c36');
 console.log('✅ PASS: Gold color updated to #ffd700 | rgb(255,215,0)');
+console.log('✅ PASS: Pink color updated to #ff69b4 | rgb(255,105,180)');
+console.log('✅ PASS: Black color updated to #3b3c36 | rgb(59,60,54)');
 console.log('✅ PASS: 9 distinct color names present');
 
 // 5. Random color shuffling ensures distinct colors for all players

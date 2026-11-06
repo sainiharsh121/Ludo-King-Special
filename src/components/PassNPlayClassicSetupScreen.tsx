@@ -511,7 +511,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
                     <TokenPreviewSVG
                       customHex={opt.hex}
                       tokenType={selectedToken}
-                      className="w-5 h-6"
+                      className="w-[22px] h-[26px]"
                     />
                   </div>
 
@@ -575,7 +575,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
                 >
                   {/* Player Token Icon */}
                   <div
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
                       colorOption ? colorOption.borderColor : 'border-dashed border-slate-600'
                     } bg-slate-900/90 shadow-sm`}
                     title={colorOption ? `${colorOption.name} Token` : 'No color selected'}
@@ -584,7 +584,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
                       <TokenPreviewSVG
                         customHex={assignedHex}
                         tokenType={selectedToken}
-                        className="w-5 h-6"
+                        className="w-[22px] h-[26px]"
                       />
                     ) : (
                       <span className="text-xs text-amber-300 font-black">+</span>

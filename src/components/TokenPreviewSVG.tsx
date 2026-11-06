@@ -7,22 +7,22 @@ import { PlayerColor, TokenId } from '../types/ludo';
  * 2. #777777ff (Silver)
  * 3. #b21919 (Crimson Red)
  * 4. #3a72db (Royal Blue)
- * 5. #c36ede (Lavender / Soft Violet)
+ * 5. #ff69b4 (Pink / Hot Pink)
  * 6. #e6cc46 (Bright Gold / Lemon Yellow)
- * 7. #7dc929 (Lime Green)
+ * 7. #45901A (Green)
  * 8. #af27d7 (Vivid Purple)
- * 9. #2e2730 (Dark Charcoal / Onyx Outline)
+ * 9. #3b3c36 (Black / Charcoal)
  */
 export const LUDO_TOKEN_PALETTE = {
   YELLOW: 'var(--accent-gold)',
   WHITE_SILVER: 'var(--track-cell)',
   RED: 'var(--seat-red)',
   BLUE: 'var(--seat-blue)',
-  LAVENDER: 'var(--seat-purple-tint)',
+  LAVENDER: 'var(--seat-purple-tint)', // #ff69b4 Pink
   GOLD_ACCENT: 'var(--accent-yellow)',
   GREEN: 'var(--seat-green)',
   VIVID_PURPLE: 'var(--seat-purple)',
-  CHARCOAL: 'var(--grid-line)',
+  CHARCOAL: '#3b3c36',
 } as const;
 
 export interface TokenColorOption {
@@ -43,7 +43,7 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#ffd700',
     accent: '#ffe44d',
     glow: 'shadow-[0_0_12px_rgba(255,215,0,0.65)]',
-    bgGrad: 'from-[#ffd700]/35 via-[#ffd700]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#ffd700]/35 via-[#ffd700]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#ffd700]',
     textColor: 'text-[#ffd700]',
   },
@@ -53,7 +53,7 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#777777ff',
     accent: '#aaaaaa',
     glow: 'shadow-[0_0_12px_rgba(119,119,119,0.65)]',
-    bgGrad: 'from-[#777777]/35 via-[#777777]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#777777]/35 via-[#777777]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#777777]',
     textColor: 'text-[#777777]',
   },
@@ -63,7 +63,7 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#b21919',
     accent: '#e11d48',
     glow: 'shadow-[0_0_12px_rgba(178,25,25,0.65)]',
-    bgGrad: 'from-[#b21919]/35 via-[#b21919]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#b21919]/35 via-[#b21919]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#b21919]',
     textColor: 'text-[#ef4444]',
   },
@@ -73,19 +73,19 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#3a72db',
     accent: '#60a5fa',
     glow: 'shadow-[0_0_12px_rgba(58,114,219,0.65)]',
-    bgGrad: 'from-[#3a72db]/35 via-[#3a72db]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#3a72db]/35 via-[#3a72db]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#3a72db]',
     textColor: 'text-[#3a72db]',
   },
   {
-    id: 'lavender-purple',
-    name: 'Lavender',
-    hex: '#c36ede',
-    accent: '#e879f9',
-    glow: 'shadow-[0_0_12px_rgba(195,110,222,0.65)]',
-    bgGrad: 'from-[#c36ede]/35 via-[#c36ede]/15 to-[#2e2730]/60',
-    borderColor: 'border-[#c36ede]',
-    textColor: 'text-[#c36ede]',
+    id: 'pink',
+    name: 'Pink',
+    hex: '#ff69b4',
+    accent: '#ff85c2',
+    glow: 'shadow-[0_0_12px_rgba(255,105,180,0.65)]',
+    bgGrad: 'from-[#ff69b4]/35 via-[#ff69b4]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#ff69b4]',
+    textColor: 'text-[#ff69b4]',
   },
   {
     id: 'lemon-yellow',
@@ -93,7 +93,7 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#e6cc46',
     accent: '#fef08a',
     glow: 'shadow-[0_0_12px_rgba(230,204,70,0.65)]',
-    bgGrad: 'from-[#e6cc46]/35 via-[#e6cc46]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#e6cc46]/35 via-[#e6cc46]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#e6cc46]',
     textColor: 'text-[#e6cc46]',
   },
@@ -103,7 +103,7 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#45901A',
     accent: '#45901A',
     glow: 'shadow-[0_0_12px_rgba(69,144,26,0.65)]',
-    bgGrad: 'from-[#45901A]/35 via-[#45901A]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#45901A]/35 via-[#45901A]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#45901A]',
     textColor: 'text-[#45901A]',
   },
@@ -113,19 +113,19 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     hex: '#af27d7',
     accent: '#c084fc',
     glow: 'shadow-[0_0_12px_rgba(175,39,215,0.65)]',
-    bgGrad: 'from-[#af27d7]/35 via-[#af27d7]/15 to-[#2e2730]/60',
+    bgGrad: 'from-[#af27d7]/35 via-[#af27d7]/15 to-[#3b3c36]/60',
     borderColor: 'border-[#af27d7]',
     textColor: 'text-[#af27d7]',
   },
   {
     id: 'charcoal-dark',
-    name: 'Dark',
-    hex: '#2e2730',
-    accent: '#64748b',
-    glow: 'shadow-[0_0_12px_rgba(46,39,48,0.85)]',
-    bgGrad: 'from-[#2e2730]/60 via-[#2e2730]/35 to-slate-950/80',
-    borderColor: 'border-slate-500',
-    textColor: 'text-slate-300',
+    name: 'Black',
+    hex: '#3b3c36',
+    accent: '#66685f',
+    glow: 'shadow-[0_0_12px_rgba(59,60,54,0.7)]',
+    bgGrad: 'from-[#3b3c36]/60 via-[#3b3c36]/35 to-slate-950/80',
+    borderColor: 'border-[#3b3c36]',
+    textColor: 'text-slate-200',
   },
 ];
 
