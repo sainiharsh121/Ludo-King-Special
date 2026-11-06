@@ -1,0 +1,36 @@
+{
+  "name": "ludo_new",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "tsx test_game_logic.ts && tsx tests/engine_acceptance.test.ts && tsx tests/dice_and_movement_rules.test.ts && tsx tests/contrast_acceptance.test.ts && tsx tests/celebration_and_rank_board.test.ts && tsx tests/two_player_colors.test.ts && tsx tests/dice_and_token_sound.test.ts && tsx tests/senior_rules_update.test.ts && tsx tests/token_skins_and_freeze_capture.test.ts",
+    "test:rules": "tsx tests/dice_and_movement_rules.test.ts",
+    "test:contrast": "tsx tests/contrast_acceptance.test.ts",
+    "test:engine": "tsx tests/engine_acceptance.test.ts",
+    "test:simulate": "tsx tests/simulate_10000.ts"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tsx": "^4.23.15",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/canvas-confetti": "^1.9.0",
+    "canvas-confetti": "^1.9.4",
+    "lucide-react": "^1.66.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3"
+  }
+}
