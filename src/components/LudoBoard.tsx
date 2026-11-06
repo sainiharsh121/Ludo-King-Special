@@ -858,7 +858,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   zIndex: 60,
                   transition: animatingPawn.isRewinding
                     ? 'left 40ms linear, top 40ms linear'
-                    : 'left 280ms ease-out, top 280ms ease-out',
+                    : 'left 310ms ease-out, top 310ms ease-out',
                 }}
                 className={`absolute pointer-events-none ${
                   !animatingPawn.isRewinding && animatingPawn.isHopping ? 'pawn-hop' : ''

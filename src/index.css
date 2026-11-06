@@ -264,7 +264,7 @@
 }
 
 .pawn-hop {
-  animation: hopStep 0.35s ease-in-out;
+  animation: hopStep 0.38s ease-in-out;
 }
 
 /* Capture shockwave burst */
