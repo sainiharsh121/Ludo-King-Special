@@ -23,6 +23,8 @@ export const LUDO_TOKEN_PALETTE = {
   GREEN: 'var(--seat-green)',
   VIVID_PURPLE: 'var(--seat-purple)',
   CHARCOAL: '#3b3c36',
+  RING_BROWN: 'var(--token-ring-brown, #5c2c16)',
+  RING_BROWN_LIGHT: 'var(--token-ring-brown-light, #803d1c)',
 } as const;
 
 export interface TokenColorOption {
@@ -402,31 +404,22 @@ export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
     default:
       return (
         <svg viewBox="0 0 28 32" className={`${className} filter drop-shadow`}>
-          {/* Base circular pedestal ring in player color with charcoal outline */}
-          <circle
-            cx="14"
-            cy="18"
-            r="12"
-            fill={activeFill}
+          {/* Base circular pedestal ring in rich brown with inner transparency */}
+          <path
+            d="M 14 10.8 A 9.2 9.2 0 1 0 14 29.2 A 9.2 9.2 0 1 0 14 10.8 Z M 14 13.6 A 6.4 6.4 0 1 1 14 26.4 A 6.4 6.4 0 1 1 14 13.6 Z"
+            fill={P.RING_BROWN}
             stroke={P.CHARCOAL}
-            strokeWidth="1.6"
+            strokeWidth="1.2"
+            fillRule="evenodd"
           />
-          {/* Inner ring groove contour for authentic 3D washer / ring stand look */}
-          <circle
-            cx="14"
-            cy="18"
-            r="9.5"
+          {/* 3D specular highlight arc on the brown pedestal ring */}
+          <path
+            d="M 7.2 22.5 A 7.8 7.8 0 0 0 20.8 22.5"
             fill="none"
-            stroke={P.CHARCOAL}
-            strokeWidth="1.1"
-            opacity="0.65"
-          />
-          <circle
-            cx="14"
-            cy="18"
-            r="8.8"
-            fill={activeFill}
-            opacity="0.9"
+            stroke={P.RING_BROWN_LIGHT}
+            strokeWidth="1"
+            strokeLinecap="round"
+            opacity="0.8"
           />
 
           {/* Upright Teardrop pin body in silver white with charcoal outline */}

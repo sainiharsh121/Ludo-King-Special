@@ -25,6 +25,8 @@
   /* tokens */
   --token-body:        #FFFFFF;
   --token-outline:     #2e2730;  /* MANDATORY: white pin on silver is 1.3:1 alone  */
+  --token-ring-brown:  #5c2c16;  /* Deep rich brown base ring for pin tokens       */
+  --token-ring-brown-light: #803d1c; /* Highlight contour on brown ring            */
 
   /* text */
   --text-dark:         #2e2730;  /* Dark text for Lavender, Silver, Gold, Yellow   */
