@@ -26,4 +26,3 @@ dist-ssr
 # Temporary dev artifacts
 crop_*.png
 cur_box_on_raw_image.png
-session-compact/
