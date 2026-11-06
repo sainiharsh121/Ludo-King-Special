@@ -1361,15 +1361,12 @@ export const App: React.FC = () => {
         /* ==================== 2. PASS & PLAY GAME ARENA (Reference Image Board) ==================== */
         <div className="w-full h-full ludo-king-match-bg text-slate-100 flex flex-col justify-between p-1.5 sm:p-2.5 select-none overflow-y-auto">
           
-          {/* Top In-Game Header (Buttons removed & replaced by bottom-left 3-dot menu) */}
+          {/* Top In-Game Header */}
           <header className="w-full flex items-center justify-center px-2.5 py-2 rounded-2xl bg-slate-900/80 border border-slate-700/60 shadow-lg backdrop-blur-md">
             <div className="flex items-center gap-2">
               <img src="/favicon.svg" alt="Ludo" className="w-5 h-5 rounded-md shadow drop-shadow-sm" />
               <span className="text-xs sm:text-sm font-black tracking-wide text-white flex items-center gap-1.5">
                 LUDO
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30">
-                  {gameMode === 'PASS_N_PLAY' ? 'Classic' : gameMode === 'TEAM_UP' ? 'Team Up 2v2' : gameMode === 'VS_COMPUTER' ? 'Vs AI' : 'Blitz'}
-                </span>
                 {rules.oneTokenOut && (
                   <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">
                     1 Token Out
@@ -1492,8 +1489,7 @@ export const App: React.FC = () => {
 
             {/* Center Bottom Glassmorphic Mode Badge (Replacing dots indicator) */}
             <div className="flex items-center justify-center pointer-events-none select-none">
-              <div className="px-4 py-1.5 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.45)] flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)] animate-pulse" />
+              <div className="px-4 py-1.5 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 shadow-[0_4px_20px_rgba(0,0,0,0.45)] flex items-center justify-center">
                 <span className="text-xs font-black tracking-widest uppercase text-amber-300 drop-shadow-sm">
                   {gameMode === 'PASS_N_PLAY'
                     ? 'Classic'

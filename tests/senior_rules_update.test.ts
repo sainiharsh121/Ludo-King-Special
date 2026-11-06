@@ -259,10 +259,32 @@ assert.ok(!setupModalTsx.includes('210'), 'SetupModal.tsx does NOT contain outda
 assert.ok(ludoBoardTsx.includes('pawnSpeedMs = 80'), 'LudoBoard.tsx has default prop pawnSpeedMs = 80');
 assert.ok(ludoBoardTsx.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'LudoBoard.tsx uses cubic-bezier(0.25, 1, 0.5, 1) ease');
 
-// index.css: .pawn-hop bounce keyframe duration synchronized
+// index.css: .pawn-hop bounce keyframe duration synchronized (0.08s)
 assert.ok(indexCss.includes('.pawn-hop'), 'index.css defines .pawn-hop');
+assert.ok(indexCss.includes('0.08s'), 'index.css synchronizes .pawn-hop duration to 0.08s');
 assert.ok(indexCss.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'index.css uses cubic-bezier(0.25, 1, 0.5, 1)');
 console.log('✅ PASS: Token hopping speed (80ms) & smooth transition synchronized across all files');
+
+// =========================================================================
+// 6. BOTTOM GLASSMORPHIC MODE BADGE & NO IRRITATING TURN/PULSE DOTS
+// =========================================================================
+// 1) Bottom footer has glassmorphic container with backdrop blur, border and shadow
+assert.ok(appTsx.includes('backdrop-blur-md'), 'App.tsx footer uses glassmorphism backdrop-blur-md');
+assert.ok(appTsx.includes('border-white/20'), 'App.tsx footer uses translucent border border-white/20');
+
+// 2) Mode names are rendered per mode in footer
+assert.ok(appTsx.includes("'Classic'"), "App.tsx renders 'Classic' for PASS_N_PLAY");
+assert.ok(appTsx.includes("'Team Up'"), "App.tsx renders 'Team Up' for TEAM_UP");
+assert.ok(appTsx.includes("'Quick'"), "App.tsx renders 'Quick' for QUICK_MODE");
+assert.ok(appTsx.includes("'Vs Computer'"), "App.tsx renders 'Vs Computer' for VS_COMPUTER");
+
+// 3) Irritating turn dots and pulsing amber dot are NOT present in footer
+assert.ok(!appTsx.includes('[0, 1, 2, 3, 4, 5].map'), 'App.tsx does NOT render 6 turn dots indicator in footer');
+assert.ok(!appTsx.includes('animate-pulse'), 'App.tsx footer does NOT render irritating pulsing amber dot');
+
+// 4) Top in-game header does not render redundant mode pill badge
+assert.ok(!appTsx.includes("bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30"), 'App.tsx header does not render redundant mode pill');
+console.log('✅ PASS: Bottom glassmorphic mode badge and removal of irritating dots verified');
 
 console.log('🎉 ALL SENIOR DEVELOPER GAMEPLAY & TEAM UP RULES ACCEPTANCE TESTS PASSED!');
 
