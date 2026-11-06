@@ -121,3 +121,4 @@
 - **Celebration Effects:**
   - Grand victory modal displays winner standings, podium avatar presentation, and celebratory confetti shower.
   - **Rematch Cleanup:** Triggering a rematch completely stops and clears all celebration confetti and animations, resetting the board cleanly for the new game.
+

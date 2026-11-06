@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap');
+      .title-text-gp { font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif; font-weight: 800; font-size: 96px; fill: #ffffff; letter-spacing: -1px; }
+    </style>
+    <clipPath id="squircle-gp">
+      <rect x="0" y="0" width="512" height="512" rx="112" ry="112" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#squircle-gp)">
+    <rect width="512" height="512" fill="#1d2b5e" />
+    
+    <!-- Watermark board background -->
+    <g opacity="0.25" transform="scale(34.133333)">
+      <rect x="0" y="0" width="6" height="6" fill="#b21919" />
+      <rect x="9" y="0" width="6" height="6" fill="#45901A" />
+      <rect x="9" y="9" width="6" height="6" fill="#af27d7" />
+      <rect x="0" y="9" width="6" height="6" fill="#3a72db" />
+      <rect x="1" y="1" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="10" y="1" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="10" y="10" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="1" y="10" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <path d="M6 0V6M7 0V6M8 0V6M9 0V6M6 1H9M6 2H9M6 3H9M6 4H9M6 5H9M6 9V15M7 9V15M8 9V15M9 9V15M6 10H9M6 11H9M6 12H9M6 13H9M6 14H9M0 6H6M0 7H6M0 8H6M0 9H6M1 6V9M2 6V9M3 6V9M4 6V9M5 6V9M9 6H15M9 7H15M9 8H15M9 9H15M10 6V9M11 6V9M12 6V9M13 6V9M14 6V9" stroke="#ffffff" stroke-width="0.07" fill="none" />
+    </g>
+
+    <!-- Token Pin and Text -->
+    <g transform="translate(156, 75)">
+      <g transform="scale(2)">
+        <ellipse cx="50" cy="106" rx="18" ry="4" fill="#000000" fill-opacity="0.35" />
+        <path d="M50 4 C27 4 10 21 10 44 C10 71 50 104 50 104 C50 104 90 71 90 44 C90 21 73 4 50 4 Z" fill="#ecae02" stroke="#2e2730" stroke-width="3" />
+        <path d="M50 44 L26 44 A24 24 0 0 1 50 20 Z" fill="#b21919" />
+        <path d="M50 44 L50 20 A24 24 0 0 1 74 44 Z" fill="#45901A" />
+        <path d="M50 44 L74 44 A24 24 0 0 1 50 68 Z" fill="#af27d7" />
+        <path d="M50 44 L50 68 A24 24 0 0 1 26 44 Z" fill="#3a72db" />
+        <circle cx="50" cy="44" r="24" fill="none" stroke="#ffffff" stroke-width="5" />
+        <circle cx="50" cy="44" r="6" fill="#ffffff" />
+      </g>
+    </g>
+
+    <text class="title-text-gp" x="256" y="415" text-anchor="middle">Ludo</text>
+  </g>
+</svg>

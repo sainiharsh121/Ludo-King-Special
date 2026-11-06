@@ -1322,9 +1322,10 @@ export const App: React.FC = () => {
           
           {/* Top In-Game Header (Buttons removed & replaced by bottom-left 3-dot menu) */}
           <header className="w-full flex items-center justify-center px-2.5 py-2 rounded-2xl bg-slate-900/80 border border-slate-700/60 shadow-lg backdrop-blur-md">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
+              <img src="/favicon.svg" alt="Ludo" className="w-5 h-5 rounded-md shadow drop-shadow-sm" />
               <span className="text-xs sm:text-sm font-black tracking-wide text-white flex items-center gap-1.5">
-                LUDO KING
+                LUDO
                 <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30">
                   {gameMode === 'PASS_N_PLAY' ? 'Classic' : gameMode === 'TEAM_UP' ? 'Team Up 2v2' : gameMode === 'VS_COMPUTER' ? 'Vs AI' : 'Blitz'}
                 </span>

@@ -104,8 +104,9 @@ export const SetupModal: React.FC<SetupModalProps> = ({
             </button>
           )}
 
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wider drop-shadow-md">
-            LUDO KING
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wider drop-shadow-md flex items-center justify-center gap-2">
+            <img src="/favicon.svg" alt="Ludo" className="w-8 h-8 rounded-lg shadow" />
+            <span>LUDO</span>
           </h2>
           <p className="text-xs sm:text-sm font-bold text-amber-200 uppercase tracking-widest mt-0.5">
             {modeTitles[gameMode] || 'Pass & Play Edition'}

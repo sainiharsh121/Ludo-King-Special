@@ -14,7 +14,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   onToggleSound,
 }) => {
   const [progress, setProgress] = useState<number>(0);
-  const [statusText, setStatusText] = useState<string>('Connecting to Ludo King...');
+  const [statusText, setStatusText] = useState<string>('Connecting to Ludo...');
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isExiting, setIsExiting] = useState<boolean>(false);
 
@@ -34,7 +34,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
 
         const next = Math.min(100, prev + Math.floor(Math.random() * 8) + 4);
         if (next < 30) {
-          setStatusText('Connecting to Ludo King...');
+          setStatusText('Connecting to Ludo...');
         } else if (next < 60) {
           setStatusText('Loading Pass & Play arena...');
         } else if (next < 85) {
@@ -201,7 +201,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
         <div className="flex flex-col items-center text-center gap-0.5 text-[10px] text-slate-400 drop-shadow">
           <p className="font-bold flex items-center gap-1 text-slate-300">
             <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            Ludo King™ • Official Pass & Play Edition
+            Ludo™ • Official Pass & Play Edition
           </p>
           <p className="text-slate-400 text-[9px]">
             Tap anywhere on screen to enter the arena

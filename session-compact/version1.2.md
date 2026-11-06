@@ -40,7 +40,19 @@ Version 1.2 delivers major gameplay dynamics, visual refinements, competitive fa
 
 ---
 
-## 2. Automated Test Verification Matrix
+## 2. Version 1.2.4 — Brand Identity & Custom App Logo
+
+- **Brand Rebranding:** App title updated from "Ludo King" / "Ludo Classic" to simply **"Ludo"**.
+- **In-Game Header:** Match arena header updated to feature the new official Ludo vector logo with clean "LUDO" typography.
+- **New SVG Logo Assets:** Extracted and bundled 3 official logo variations:
+  - `logo_dice_plate.svg` / `favicon.svg`: Dice-O Plate (Primary official app icon & web favicon).
+  - `logo_night_diamond.svg`: Night Diamond (Midnight board diamond variant).
+  - `logo_gold_pin.svg`: Gold Pin (Four-color header token pin on navy board watermark).
+- **Capacitor & Android Config:** Synchronized `capacitor.config.json` and `strings.xml` with `appName` set to **"Ludo"**.
+
+---
+
+## 3. Automated Test Verification Matrix
 
 All test suites pass with 100% success rate:
 - ✅ **Base Yard Exit & Track Mechanics:** Safe stars, base unlocks, capture rules, home entry guards.
@@ -48,3 +60,4 @@ All test suites pass with 100% success rate:
 - ✅ **Dice Engine:** Max 2 sixes cap, home overshoot turn passing, 1350ms rolling physics.
 - ✅ **Team Up Engine:** Partner roll transfer, 8-token team win condition, friendly kill toggle.
 - ✅ **Visual & Accessibility:** 9-color palette, zero raw hex outside `:root`, WCAG AAA/AA contrast.
+

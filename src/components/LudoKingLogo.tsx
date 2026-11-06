@@ -233,7 +233,7 @@ export const LudoKingLogo: React.FC<LudoKingLogoProps> = ({
             </g>
           </g>
 
-          {/* 4. 3D Embossed Golden "KING" Banner (Matches Image 3) */}
+          {/* 4. 3D Embossed Golden Banner */}
           <g filter="url(#logoShadow)">
             {/* Banner Dark Backdrop Ribbon */}
             <path
@@ -246,31 +246,31 @@ export const LudoKingLogo: React.FC<LudoKingLogoProps> = ({
             {/* 3D Drop Shadow Text */}
             <text
               x="120"
-              y="193"
+              y="192"
               textAnchor="middle"
               fill="#451a03"
-              fontSize="30"
+              fontSize="22"
               fontWeight="900"
               fontFamily="'Fredoka', 'Cinzel', 'Nunito', serif"
               letterSpacing="3"
             >
-              KING
+              CLASSIC
             </text>
             
             {/* Golden Embossed Main Text */}
             <text
               x="120"
-              y="191"
+              y="190"
               textAnchor="middle"
               fill="url(#kingTextGrad)"
               stroke="#78350f"
               strokeWidth="1.2"
-              fontSize="30"
+              fontSize="22"
               fontWeight="900"
               fontFamily="'Fredoka', 'Cinzel', 'Nunito', serif"
               letterSpacing="3"
             >
-              KING
+              CLASSIC
             </text>
           </g>
         </svg>

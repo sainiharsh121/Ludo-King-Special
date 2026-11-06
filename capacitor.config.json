@@ -1,6 +1,6 @@
 {
   "appId": "com.mycompany.ludo",
-  "appName": "Ludo Classic",
+  "appName": "Ludo",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

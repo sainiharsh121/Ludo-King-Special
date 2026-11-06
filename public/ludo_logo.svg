@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&amp;display=swap');
+      .title-text { font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif; font-weight: 800; font-size: 112px; fill: #2e2730; letter-spacing: -2px; }
+    </style>
+    <clipPath id="squircle-dp">
+      <rect x="0" y="0" width="512" height="512" rx="112" ry="112" />
+    </clipPath>
+    <filter id="shadow-dp" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="14" stdDeviation="0" flood-color="#2e2730" flood-opacity="0.28" />
+    </filter>
+  </defs>
+
+  <g clip-path="url(#squircle-dp)">
+    <rect width="512" height="512" fill="#ffffff" />
+    
+    <!-- 4-Quadrant Board Matrix -->
+    <g transform="scale(34.133333)">
+      <rect x="0" y="0" width="6" height="6" fill="#b21919" />
+      <rect x="9" y="0" width="6" height="6" fill="#45901A" />
+      <rect x="9" y="9" width="6" height="6" fill="#ecae02" />
+      <rect x="0" y="9" width="6" height="6" fill="#3a72db" />
+      <rect x="1" y="1" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="10" y="1" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="10" y="10" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="1" y="10" width="4" height="4" rx="0.4" fill="#ffffff" />
+      <rect x="1" y="7" width="5" height="1" fill="#b21919" />
+      <rect x="1" y="6" width="1" height="1" fill="#b21919" />
+      <rect x="7" y="1" width="1" height="5" fill="#45901A" />
+      <rect x="8" y="1" width="1" height="1" fill="#45901A" />
+      <rect x="9" y="7" width="5" height="1" fill="#ecae02" />
+      <rect x="13" y="8" width="1" height="1" fill="#ecae02" />
+      <rect x="7" y="9" width="1" height="5" fill="#3a72db" />
+      <rect x="6" y="13" width="1" height="1" fill="#3a72db" />
+      <path d="M6 0V6M7 0V6M8 0V6M9 0V6M6 1H9M6 2H9M6 3H9M6 4H9M6 5H9M6 9V15M7 9V15M8 9V15M9 9V15M6 10H9M6 11H9M6 12H9M6 13H9M6 14H9M0 6H6M0 7H6M0 8H6M0 9H6M1 6V9M2 6V9M3 6V9M4 6V9M5 6V9M9 6H15M9 7H15M9 8H15M9 9H15M10 6V9M11 6V9M12 6V9M13 6V9M14 6V9" stroke="#2e2730" stroke-opacity="0.35" stroke-width="0.06" fill="none" />
+      <polygon points="6,6 6,9 7.5,7.5" fill="#b21919" />
+      <polygon points="6,6 9,6 7.5,7.5" fill="#45901A" />
+      <polygon points="9,6 9,9 7.5,7.5" fill="#ecae02" />
+      <polygon points="6,9 9,9 7.5,7.5" fill="#3a72db" />
+      <circle cx="2" cy="2" r="0.55" fill="#b21919" /><circle cx="4" cy="2" r="0.55" fill="#b21919" /><circle cx="2" cy="4" r="0.55" fill="#b21919" /><circle cx="4" cy="4" r="0.55" fill="#b21919" />
+      <circle cx="11" cy="2" r="0.55" fill="#45901A" /><circle cx="13" cy="2" r="0.55" fill="#45901A" /><circle cx="11" cy="4" r="0.55" fill="#45901A" /><circle cx="13" cy="4" r="0.55" fill="#45901A" />
+      <circle cx="11" cy="11" r="0.55" fill="#ecae02" /><circle cx="13" cy="11" r="0.55" fill="#ecae02" /><circle cx="11" cy="13" r="0.55" fill="#ecae02" /><circle cx="13" cy="13" r="0.55" fill="#ecae02" />
+      <circle cx="2" cy="11" r="0.55" fill="#3a72db" /><circle cx="4" cy="11" r="0.55" fill="#3a72db" /><circle cx="2" cy="13" r="0.55" fill="#3a72db" /><circle cx="4" cy="13" r="0.55" fill="#3a72db" />
+    </g>
+
+    <!-- Center Badge Plate -->
+    <rect x="66" y="186" width="380" height="140" rx="44" fill="#ffffff" stroke="#2e2730" stroke-width="6" filter="url(#shadow-dp)" />
+    
+    <!-- Wordmark "Lud" + Red Die "o" -->
+    <g transform="translate(108, 290)">
+      <text class="title-text" x="0" y="0">Lud</text>
+      <g transform="translate(205, -78) rotate(-10)">
+        <rect x="0" y="0" width="70" height="70" rx="18" fill="#b21919" stroke="#8b0000" stroke-width="2" />
+        <circle cx="35" cy="35" r="10" fill="#ffffff" />
+      </g>
+    </g>
+  </g>
+</svg>

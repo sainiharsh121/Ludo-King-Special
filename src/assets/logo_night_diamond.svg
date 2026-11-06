@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lilita+One&amp;display=swap');
+      .title-text-nd { font-family: 'Lilita One', 'Nunito', system-ui, sans-serif; font-size: 104px; fill: #ecae02; letter-spacing: 6px; }
+    </style>
+    <clipPath id="squircle-nd">
+      <rect x="0" y="0" width="512" height="512" rx="112" ry="112" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#squircle-nd)">
+    <rect width="512" height="512" fill="#2e2730" />
+    
+    <!-- Rotated 45 deg board diamond -->
+    <g transform="translate(256, 256) rotate(45) scale(24.53) translate(-7.5, -7.5)">
+      <rect x="0" y="0" width="15" height="15" rx="0.6" fill="#e4e4e4" />
+      <rect x="0" y="0" width="6" height="6" fill="#b21919" />
+      <rect x="9" y="0" width="6" height="6" fill="#45901A" />
+      <rect x="9" y="9" width="6" height="6" fill="#ecae02" />
+      <rect x="0" y="9" width="6" height="6" fill="#3a72db" />
+      <rect x="1" y="1" width="4" height="4" rx="0.4" fill="#e4e4e4" />
+      <rect x="10" y="1" width="4" height="4" rx="0.4" fill="#e4e4e4" />
+      <rect x="10" y="10" width="4" height="4" rx="0.4" fill="#e4e4e4" />
+      <rect x="1" y="10" width="4" height="4" rx="0.4" fill="#e4e4e4" />
+      <rect x="1" y="7" width="5" height="1" fill="#b21919" />
+      <rect x="7" y="1" width="1" height="5" fill="#45901A" />
+      <rect x="9" y="7" width="5" height="1" fill="#ecae02" />
+      <rect x="7" y="9" width="1" height="5" fill="#3a72db" />
+      <polygon points="6,6 6,9 7.5,7.5" fill="#b21919" />
+      <polygon points="6,6 9,6 7.5,7.5" fill="#45901A" />
+      <polygon points="9,6 9,9 7.5,7.5" fill="#ecae02" />
+      <polygon points="6,9 9,9 7.5,7.5" fill="#3a72db" />
+      <circle cx="2" cy="2" r="0.6" fill="#b21919" /><circle cx="4" cy="2" r="0.6" fill="#b21919" /><circle cx="2" cy="4" r="0.6" fill="#b21919" /><circle cx="4" cy="4" r="0.6" fill="#b21919" />
+      <circle cx="11" cy="2" r="0.6" fill="#45901A" /><circle cx="13" cy="2" r="0.6" fill="#45901A" /><circle cx="11" cy="4" r="0.6" fill="#45901A" /><circle cx="13" cy="4" r="0.6" fill="#45901A" />
+      <circle cx="11" cy="11" r="0.6" fill="#ecae02" /><circle cx="13" cy="11" r="0.6" fill="#ecae02" /><circle cx="11" cy="13" r="0.6" fill="#ecae02" /><circle cx="13" cy="13" r="0.6" fill="#ecae02" />
+      <circle cx="2" cy="11" r="0.6" fill="#3a72db" /><circle cx="4" cy="11" r="0.6" fill="#3a72db" /><circle cx="2" cy="13" r="0.6" fill="#3a72db" /><circle cx="4" cy="13" r="0.6" fill="#3a72db" />
+    </g>
+
+    <!-- Pill border & badge -->
+    <rect x="76" y="196" width="360" height="120" rx="60" fill="#2e2730" stroke="#ecae02" stroke-width="6" />
+    <text class="title-text-nd" x="256" y="286" text-anchor="middle">LUDO</text>
+  </g>
+</svg>

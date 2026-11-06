@@ -789,7 +789,7 @@ export const PassNPlaySetupScreen: React.FC<PassNPlaySetupScreenProps> = ({
             <div className="space-y-3 text-xs leading-relaxed">
               <div className="p-2 rounded-xl bg-slate-900/60 border border-slate-700">
                 <span className="font-black text-amber-400 block mb-0.5">1. Classic Mode</span>
-                Standard authentic Ludo King match. Move all 4 tokens to home center to win.
+                Standard authentic Ludo match. Move all 4 tokens to home center to win.
               </div>
 
               <div className="p-2 rounded-xl bg-slate-900/60 border border-amber-400/50">
