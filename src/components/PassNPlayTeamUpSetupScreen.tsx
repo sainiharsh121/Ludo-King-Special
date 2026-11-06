@@ -292,7 +292,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 200,
+      pawnSpeedMs: 280,
       autoMoveSingleLegal: true,
       friendlyKill,
       oneTokenOut,

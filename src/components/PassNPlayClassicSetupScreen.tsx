@@ -299,7 +299,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 200,
+      pawnSpeedMs: 280,
       autoMoveSingleLegal: true,
       oneTokenOut,
     };
