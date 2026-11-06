@@ -295,7 +295,7 @@ export const App: React.FC = () => {
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 310,
+      pawnSpeedMs: 210,
       autoMoveSingleLegal: true,
       freezeStarsEnabled: true,
       jumpIconEnabled: true,
@@ -844,7 +844,7 @@ export const App: React.FC = () => {
     setPhase('ROLLING');
     setNotification(null);
 
-    // Settle roll after 285ms (snappy authentic dice roll matching Dice3D)
+    // Settle roll after 260ms (snappy authentic dice roll matching Dice3D)
     setTimeout(async () => {
       setIsRolling(false);
 
@@ -907,7 +907,7 @@ export const App: React.FC = () => {
           setActivePlayerIndex(nextIdx);
           setPhase('WAITING_ROLL');
           setNotification(`${players[nextIdx].name}'s Turn`);
-        }, 1100);
+        }, 450);
         return;
       }
 
@@ -927,7 +927,7 @@ export const App: React.FC = () => {
         );
         setTimeout(() => {
           animateAndApplyMove(legalPawns[0].id, roll);
-        }, 250);
+        }, 80);
       } else {
         // Multiple pawns can move, let the player select
         setLegalPawnIds(legalPawns.map(p => p.id));
@@ -938,7 +938,7 @@ export const App: React.FC = () => {
             : 'Select a glowing pawn to move!'
         );
       }
-    }, 285);
+    }, 260);
   };
 
   // Handle Pawn Click from Board
@@ -1311,7 +1311,7 @@ export const App: React.FC = () => {
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,
                 safeZoneMode: 'standard',
-                pawnSpeedMs: 310,
+                pawnSpeedMs: 210,
                 autoMoveSingleLegal: true,
                 friendlyKill: true,
                 oneTokenOut: false,

@@ -45,7 +45,7 @@ export const Dice3D: React.FC<Dice3DProps> = ({
         setScrollingFace(value);
         setInternalRolling(false);
         soundEngine.playDiceLand();
-      }, 285);
+      }, 260);
 
       return () => {
         clearTimeout(timer);
@@ -55,6 +55,10 @@ export const Dice3D: React.FC<Dice3DProps> = ({
         }
       };
     } else {
+      if (rollIntervalRef.current) {
+        clearInterval(rollIntervalRef.current);
+        rollIntervalRef.current = null;
+      }
       setScrollingFace(value);
       setInternalRolling(false);
     }

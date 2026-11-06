@@ -43,7 +43,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
   jumpIconIndices = [],
   movablePlayerId,
   selectedTokenId,
-  pawnSpeedMs = 310,
+  pawnSpeedMs = 210,
 }) => {
   // Quadrant visual configurations dynamically derived from player choices.
   // In 2-player (or 3-player) matches, if active players pick colors like Green or Blue,
@@ -227,7 +227,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
             onPawnClick(idx);
           }
         }}
-        className={`w-[22px] h-[22px] sm:w-[26px] sm:h-[26px] rounded-full shadow-inner flex items-center justify-center border-[1.5px] relative transition-transform ${
+        className={`w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] rounded-full shadow-inner flex items-center justify-center border-[1.5px] relative transition-transform ${
           isLegal ? 'cursor-pointer hover:scale-110 active:scale-95' : ''
         }`}
         style={{
@@ -245,7 +245,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               tokenType={config.player?.tokenId || selectedTokenId || 'pin'}
               color={color}
               customHex={config.player?.tokenColorHex || config.seatColor}
-              className="w-[16px] h-[21px] sm:w-[19px] sm:h-[24px] -translate-y-[1px]"
+              className="w-[20px] h-[23px] sm:w-[23px] sm:h-[27px]"
             />
           </div>
         )}
@@ -837,7 +837,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                         tokenType={item.player.tokenId || selectedTokenId || 'pin'}
                         color={item.player.color}
                         customHex={colorHex}
-                        className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
+                        className="w-[21px] h-[24px] sm:w-[24px] sm:h-[28px]"
                       />
                     </div>
                   </div>
@@ -872,7 +872,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
                     color={animatingPawn.color}
                     customHex={animPlayer?.tokenColorHex || animHex}
-                    className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
+                    className="w-[21px] h-[24px] sm:w-[24px] sm:h-[28px]"
                   />
                 </div>
               </div>

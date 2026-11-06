@@ -401,18 +401,52 @@ export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
     case 'pin':
     default:
       return (
-        <svg viewBox="0 0 24 32" className={`${className} filter drop-shadow`}>
-          {/* Teardrop pin body in silver white with charcoal outline */}
+        <svg viewBox="0 0 28 32" className={`${className} filter drop-shadow`}>
+          {/* Base circular pedestal ring in player color with charcoal outline */}
+          <circle
+            cx="14"
+            cy="18"
+            r="12"
+            fill={activeFill}
+            stroke={P.CHARCOAL}
+            strokeWidth="1.6"
+          />
+          {/* Inner ring groove contour for authentic 3D washer / ring stand look */}
+          <circle
+            cx="14"
+            cy="18"
+            r="9.5"
+            fill="none"
+            stroke={P.CHARCOAL}
+            strokeWidth="1.1"
+            opacity="0.65"
+          />
+          <circle
+            cx="14"
+            cy="18"
+            r="8.8"
+            fill={activeFill}
+            opacity="0.9"
+          />
+
+          {/* Upright Teardrop pin body in silver white with charcoal outline */}
           <path
-            d="M12 2C6.48 2 2 6.48 2 12c0 7.5 10 18 10 18s10-10.5 10-18c0-5.52-4.48-10-10-10z"
+            d="M 14 2 C 9.58 2 6 5.58 6 10 C 6 15.8 14 23.5 14 23.5 S 22 15.8 22 10 C 22 5.58 18.42 2 14 2 Z"
             fill={P.WHITE_SILVER}
             stroke={P.CHARCOAL}
-            strokeWidth="1.8"
+            strokeWidth="1.6"
           />
           {/* Center color dot in active color (enlarged for vivid color clarity) */}
-          <circle cx="12" cy="12" r="7.2" fill={activeFill} stroke={P.CHARCOAL} strokeWidth="0.8" />
+          <circle
+            cx="14"
+            cy="10"
+            r="5.8"
+            fill={activeFill}
+            stroke={P.CHARCOAL}
+            strokeWidth="0.8"
+          />
           {/* Highlight specular dot */}
-          <circle cx="9.8" cy="9.8" r="1.8" fill={P.WHITE_SILVER} opacity="0.85" />
+          <circle cx="12" cy="8" r="1.5" fill={P.WHITE_SILVER} opacity="0.9" />
         </svg>
       );
   }

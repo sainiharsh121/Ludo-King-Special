@@ -36,6 +36,9 @@
   --ui-dice-face-bg:   #ffffff;
   --ui-dice-face-end:  #e2e8f0;
   --ui-dice-face-bord: #cbd5e1;
+  --ui-dice-slot-bg:   #fff1f3;
+  --ui-dice-slot-end:  #fce7f3;
+  --ui-dice-slot-bord: #fbcfe8;
   --ui-match-bg-1:     #0c2352;
   --ui-match-bg-2:     #174291;
   --ui-match-bg-3:     #0d265a;
@@ -95,7 +98,7 @@
   position: absolute;
   width: 32px;
   height: 32px;
-  border-radius: 7px;
+  border-radius: 9.5px;
   background: radial-gradient(circle at 30% 30%, var(--ui-dice-face-bg), var(--ui-dice-face-end));
   border: 1.5px solid var(--ui-dice-face-bord);
   box-shadow: inset 0 1.5px 3px rgba(255,255,255,0.9), inset 0 -1.5px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.3);
@@ -264,7 +267,7 @@
 }
 
 .pawn-hop {
-  animation: hopStep 0.31s cubic-bezier(0.25, 1, 0.5, 1);
+  animation: hopStep 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 /* Capture shockwave burst */

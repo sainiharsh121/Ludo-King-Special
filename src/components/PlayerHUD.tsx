@@ -1,6 +1,7 @@
 import React from 'react';
 import { Player, PlayerColor, TurnPhase } from '../types/ludo';
 import { Dice3D } from './Dice3D';
+import { TokenPreviewSVG } from './TokenPreviewSVG';
 import { Trophy, Swords } from 'lucide-react';
 
 interface PlayerHUDProps {
@@ -57,39 +58,20 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
           boxShadow: 'inset 0 2px 3px rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.6)',
         }}
       >
-        {/* ================= 1. TOKEN PIN BADGE SOCKET ================= */}
+        {/* ================= 1. TOKEN PIN BADGE SOCKET (Narrower & compact as in Image 5) ================= */}
         <div className="relative flex-shrink-0">
           <div
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border border-sky-300/40 shadow-inner relative overflow-hidden"
+            className="w-8 h-11 sm:w-9 sm:h-12 rounded-xl flex items-center justify-center border border-sky-300/40 shadow-inner relative overflow-hidden px-0.5"
             style={{
               background: 'radial-gradient(circle at 40% 35%, var(--ui-arcade-stage-1) 0%, var(--ui-arcade-stage-2) 70%, var(--ui-cosmic-bg-3) 100%)',
             }}
           >
-            {/* Authentic Map-Pin Token Icon */}
-            <svg
-              viewBox="0 0 24 32"
+            <TokenPreviewSVG
+              tokenType={player.tokenId || 'pin'}
+              color={player.color}
+              customHex={activeColorHex}
               className="w-6 h-7 sm:w-7 sm:h-8 transition-transform hover:scale-110"
-              style={{ filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.45))' }}
-            >
-              {/* Teardrop outer shell in silver-white with 1.5px --token-outline */}
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12c0 7.5 10 18 10 18s10-10.5 10-18c0-5.52-4.48-10-10-10z"
-                fill="var(--token-body)"
-                stroke="var(--token-outline)"
-                strokeWidth="1.5"
-              />
-              {/* Inner colored circular gem in seat colour (enlarged for color clarity) */}
-              <circle
-                cx="12"
-                cy="12"
-                r="7.2"
-                fill={activeColorHex}
-                stroke="var(--token-outline)"
-                strokeWidth="0.8"
-              />
-              {/* Shiny glossy specular highlight */}
-              <circle cx="9.8" cy="9.8" r="1.8" fill="var(--token-body)" opacity="0.85" />
-            </svg>
+            />
 
             {/* Rank Trophy Badge if Finished */}
             {player.rank !== null && (
@@ -127,8 +109,15 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
           </div>
         </div>
 
-        {/* ================= 2. DICE OR WAITING SLOT ================= */}
-        <div className="w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 flex items-center justify-center">
+        {/* ================= 2. DICE OR WAITING SLOT (Rounded square with Image 4 shading, NO inner box) ================= */}
+        <div
+          className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl border flex-shrink-0 flex items-center justify-center transition-all duration-200"
+          style={{
+            background: 'radial-gradient(circle at 35% 30%, var(--ui-dice-slot-bg) 0%, var(--ui-dice-slot-end) 100%)',
+            borderColor: 'var(--ui-dice-slot-bord)',
+            boxShadow: 'inset 0 1.5px 3px rgba(255,255,255,0.95), inset 0 -2px 4px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.25)',
+          }}
+        >
           {isActiveTurn ? (
             <div className="relative flex items-center justify-center">
               <Dice3D
@@ -139,19 +128,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
                 accentColor={activeColorHex}
               />
             </div>
-          ) : (
-            /* Authentic Empty Waiting Slot from Reference Screenshot */
-            <div
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl border border-white/20 shadow-inner flex items-center justify-center"
-              style={{
-                background:
-                  'radial-gradient(circle at 40% 35%, rgba(254, 205, 211, 0.45) 0%, rgba(244, 63, 94, 0.15) 60%, rgba(15, 23, 42, 0.4) 100%)',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.4)',
-              }}
-            >
-              <div className="w-6 h-6 rounded-lg border border-white/10 bg-white/10" />
-            </div>
-          )}
+          ) : null}
         </div>
 
         {/* ================= 3. GOLDEN POINTER ARROW (Pointing at Active Dice) ================= */}
