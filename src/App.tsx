@@ -349,6 +349,10 @@ export const App: React.FC = () => {
   const lastFreezeRelocationRef = useRef<number>(Date.now());
   const lastJumpRelocationRef = useRef<number>(Date.now());
 
+  // Track match moves and rolls without a six for dynamic mid-match 6 boost
+  const matchRollsCountRef = useRef<number>(0);
+  const rollsWithoutSixRef = useRef<number>(0);
+
   // Unified Hazard Tick: checks respawns & wall-clock periodic relocations without turn interruptions
   useEffect(() => {
     if (currentScreen !== 'GAME') return;
@@ -831,12 +835,34 @@ export const App: React.FC = () => {
   const handleRollDice = async () => {
     if (phase !== 'WAITING_ROLL' || isRolling) return;
 
+    matchRollsCountRef.current += 1;
+
     // Requirement 2: If player already rolled 2 consecutive sixes, 3rd six is strictly forbidden; roll 1..5!
     let roll: number;
     if (activePlayer.consecutiveSixes >= 2) {
-      roll = Math.floor(Math.random() * 5) + 1; // 1..5
+      roll = Math.floor(Math.random() * 5) + 1; // 1..5 strictly guaranteed
+    } else if (activePlayer.consecutiveSixes === 1) {
+      // Second consecutive six uses unboosted baseline probability
+      roll = appRng.d6(0);
     } else {
-      roll = appRng.d6(0.02);
+      // Dynamic single 6 probability boost mid-match every few moves to accelerate gameplay & maintain engagement
+      const rollsWithoutSix = rollsWithoutSixRef.current;
+      const isPeriodicBoostMove = matchRollsCountRef.current % 3 === 0;
+
+      let boostSix = 0.05; // Base gentle boost
+      if (rollsWithoutSix >= 3 || isPeriodicBoostMove) {
+        boostSix = 0.18; // Strong boost (~34.7% chance = roughly 1 in 3 chance)
+      } else if (rollsWithoutSix >= 2) {
+        boostSix = 0.12; // Moderate boost (~28.7% chance)
+      }
+
+      roll = appRng.d6(boostSix);
+    }
+
+    if (roll === 6) {
+      rollsWithoutSixRef.current = 0;
+    } else {
+      rollsWithoutSixRef.current += 1;
     }
 
     setDiceValue(roll);
@@ -993,6 +1019,8 @@ export const App: React.FC = () => {
     setJumpIconRespawnTimes([]);
     lastFreezeRelocationRef.current = Date.now();
     lastJumpRelocationRef.current = Date.now();
+    matchRollsCountRef.current = 0;
+    rollsWithoutSixRef.current = 0;
     setNotification('Match Started! Tap dice to roll.');
     setIsSetupOpen(false);
     setIsGameOverOpen(false);
@@ -1037,6 +1065,8 @@ export const App: React.FC = () => {
     setJumpIconRespawnTimes([]);
     lastFreezeRelocationRef.current = Date.now();
     lastJumpRelocationRef.current = Date.now();
+    matchRollsCountRef.current = 0;
+    rollsWithoutSixRef.current = 0;
     setWinningTeam(null);
     setIsGameOverOpen(false);
     setNotification('Rematch Started! Tap dice to roll.');
@@ -1067,6 +1097,8 @@ export const App: React.FC = () => {
     setJumpIconRespawnTimes([]);
     lastFreezeRelocationRef.current = Date.now();
     lastJumpRelocationRef.current = Date.now();
+    matchRollsCountRef.current = 0;
+    rollsWithoutSixRef.current = 0;
     setNotification(
       newRules.oneTokenOut
         ? '1 Token Out Active! Tap glowing dice to roll.'
@@ -1117,6 +1149,8 @@ export const App: React.FC = () => {
     setJumpIconRespawnTimes(savedGame.jumpIconRespawnTimes || (savedGame.jumpIconRespawnTime !== null && savedGame.jumpIconRespawnTime !== undefined ? [savedGame.jumpIconRespawnTime] : []));
     lastFreezeRelocationRef.current = Date.now();
     lastJumpRelocationRef.current = Date.now();
+    matchRollsCountRef.current = 0;
+    rollsWithoutSixRef.current = 0;
     setNotification(`Resumed: ${savedGame.title}`);
     setIsSetupOpen(false);
     setIsGameOverOpen(false);
