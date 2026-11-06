@@ -295,7 +295,7 @@ export const App: React.FC = () => {
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 130,
+      pawnSpeedMs: 200,
       autoMoveSingleLegal: true,
       freezeStarsEnabled: true,
       jumpIconEnabled: true,
@@ -598,11 +598,15 @@ export const App: React.FC = () => {
       setJumpIconRespawnTimes(prev => [...prev, Date.now() + jumpDelay]);
     }
 
-    // Rule 2: Jump Icon triggered! Secondary hop
+    // Rule 2: Jump Icon triggered! Secondary hop (supports forward & backward pushes)
     if (outcome.jumpSteps && outcome.jumpToStep !== undefined && outcome.jumpToStep !== outcome.toStep) {
       soundEngine.playJumpSound();
-      setNotification(`⚡ Jump Icon triggered! Hopping +${outcome.jumpSteps} steps!`);
-      await new Promise(res => setTimeout(res, 140));
+      if (outcome.jumpSteps < 0) {
+        setNotification(`⚡ Backward Jump! Pushed back ${Math.abs(outcome.jumpSteps)} steps!`);
+      } else {
+        setNotification(`⚡ Jump Icon triggered! Hopping +${outcome.jumpSteps} steps!`);
+      }
+      await new Promise(res => setTimeout(res, 160));
 
       const jumpPath = getStepPath(controllingPlayer.color, outcome.toStep, outcome.jumpToStep, pawnId);
       for (let i = 0; i < jumpPath.length; i++) {
@@ -1304,7 +1308,7 @@ export const App: React.FC = () => {
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,
                 safeZoneMode: 'standard',
-                pawnSpeedMs: 130,
+                pawnSpeedMs: 200,
                 autoMoveSingleLegal: true,
                 friendlyKill: true,
                 oneTokenOut: false,

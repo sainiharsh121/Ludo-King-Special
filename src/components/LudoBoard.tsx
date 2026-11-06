@@ -225,7 +225,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
             onPawnClick(idx);
           }
         }}
-        className={`w-[21px] h-[21px] sm:w-[25px] sm:h-[25px] rounded-full shadow-inner flex items-center justify-center border-[1.5px] relative transition-transform ${
+        className={`w-[22px] h-[22px] sm:w-[26px] sm:h-[26px] rounded-full shadow-inner flex items-center justify-center border-[1.5px] relative transition-transform ${
           isLegal ? 'cursor-pointer hover:scale-110 active:scale-95' : ''
         }`}
         style={{
@@ -243,7 +243,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               tokenType={config.player?.tokenId || selectedTokenId || 'pin'}
               color={color}
               customHex={config.player?.tokenColorHex || config.seatColor}
-              className="w-[18px] h-[23px] sm:w-[21px] sm:h-[26px]"
+              className="w-[16px] h-[21px] sm:w-[19px] sm:h-[24px] -translate-y-[1px]"
             />
           </div>
         )}
@@ -412,18 +412,27 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
     </div>
   );
 
-  // Helper to render Jump Icon on board (Rule 2: Energetic zap / spring jump icon)
-  const renderJumpIcon = () => (
-    <div className="relative flex items-center justify-center animate-bounce z-10" title="Jump Icon (+1 to +5)">
-      <Zap
-        className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[1.8]"
-        style={{
-          color: 'var(--grid-line)',
-          fill: 'var(--accent-yellow)',
-        }}
-      />
-    </div>
-  );
+  // Helper to render Jump Icon on board (Rule 2: Energetic zap / spring jump icon with dual forward/backward support)
+  const renderJumpIcon = (trackIdx?: number) => {
+    const isDual = trackIdx !== undefined && Array.isArray(jumpIconIndices) && jumpIconIndices.indexOf(trackIdx) < 2;
+    return (
+      <div
+        className="relative flex items-center justify-center animate-bounce z-10"
+        title={isDual ? "Dual Jump Icon (Forward or Backward 1-5)" : "Jump Icon (+1 to +5)"}
+      >
+        <Zap
+          className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[1.8]"
+          style={{
+            color: 'var(--grid-line)',
+            fill: isDual ? 'var(--ui-modal-loser)' : 'var(--accent-yellow)',
+          }}
+        />
+        {isDual && (
+          <span className="absolute -bottom-1 -right-1 text-[7px] font-black text-amber-200 pointer-events-none">⇄</span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="relative aspect-square w-full max-w-[500px] mx-auto select-none touch-manipulation p-1 sm:p-1.5 rounded-2xl bg-slate-900/60 shadow-2xl">
@@ -490,7 +499,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               >
                 {isStar && renderSafeStar()}
                 {isFreezeStar && renderFreezeStar()}
-                {isJumpIcon && renderJumpIcon()}
+                {isJumpIcon && renderJumpIcon(trackIdx)}
                 {isGreenStart && (
                   <ArrowDown
                     className="w-3.5 h-3.5 stroke-[3] drop-shadow"
@@ -562,7 +571,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               >
                 {isStar && renderSafeStar()}
                 {isFreezeStar && renderFreezeStar()}
-                {isJumpIcon && renderJumpIcon()}
+                {isJumpIcon && renderJumpIcon(trackIdx)}
                 {isRedStart && (
                   <ArrowRight
                     className="w-3.5 h-3.5 stroke-[3] drop-shadow"
@@ -655,7 +664,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               >
                 {isStar && renderSafeStar()}
                 {isFreezeStar && renderFreezeStar()}
-                {isJumpIcon && renderJumpIcon()}
+                {isJumpIcon && renderJumpIcon(trackIdx)}
                 {isYellowStart && (
                   <ArrowLeft
                     className="w-3.5 h-3.5 stroke-[3] drop-shadow"
@@ -727,7 +736,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               >
                 {isStar && renderSafeStar()}
                 {isFreezeStar && renderFreezeStar()}
-                {isJumpIcon && renderJumpIcon()}
+                {isJumpIcon && renderJumpIcon(trackIdx)}
                 {isBlueStart && (
                   <ArrowUp
                     className="w-3.5 h-3.5 stroke-[3] drop-shadow"
@@ -784,7 +793,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   style={{
                     left: `${leftPercent}%`,
                     top: `${topPercent}%`,
-                    transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${offset.scale})`,
+                    transform: `translate(-50%, -58%) translate(${offset.x}px, ${offset.y}px) scale(${offset.scale})`,
                     zIndex: isLegal ? 45 : 20 + itemIdx,
                   }}
                   className="absolute pointer-events-auto"
@@ -826,7 +835,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                         tokenType={item.player.tokenId || selectedTokenId || 'pin'}
                         color={item.player.color}
                         customHex={colorHex}
-                        className="w-[18px] h-[23px] sm:w-[21px] sm:h-[26px]"
+                        className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
                       />
                     </div>
                   </div>
@@ -845,11 +854,11 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                 style={{
                   left: `${((animatingPawn.coord.col + 0.5) / 15) * 100}%`,
                   top: `${((animatingPawn.coord.row + 0.5) / 15) * 100}%`,
-                  transform: 'translate(-50%, -50%)',
+                  transform: 'translate(-50%, -58%)',
                   zIndex: 60,
                   transition: animatingPawn.isRewinding
                     ? 'left 40ms linear, top 40ms linear'
-                    : 'left 140ms ease-out, top 140ms ease-out',
+                    : 'left 200ms ease-out, top 200ms ease-out',
                 }}
                 className={`absolute pointer-events-none ${
                   !animatingPawn.isRewinding && animatingPawn.isHopping ? 'pawn-hop' : ''
@@ -859,7 +868,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                   tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
                   color={animatingPawn.color}
                   customHex={animPlayer?.tokenColorHex || animHex}
-                  className="w-[18px] h-[23px] sm:w-[21px] sm:h-[26px]"
+                  className="w-[17px] h-[22px] sm:w-[20px] sm:h-[25px]"
                 />
               </div>
             );

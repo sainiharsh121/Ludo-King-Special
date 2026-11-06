@@ -343,13 +343,21 @@ export function getPawnCoordinate(color: PlayerColor, step: number, pawnId: numb
   return HOME_CENTERS[color];
 }
 
-// Build list of coordinates from fromStep to toStep for animation hopping
+// Build list of coordinates from fromStep to toStep for animation hopping (supports both forward and backward steps)
 export function getStepPath(color: PlayerColor, fromStep: number, toStep: number, pawnId: number): Coordinate[] {
   const path: Coordinate[] = [];
   if (fromStep === -1) {
     // Exiting base into start tile
     path.push(BASE_SOCKETS[color][pawnId]);
     path.push(getPawnCoordinate(color, 0, pawnId));
+    return path;
+  }
+
+  if (toStep < fromStep) {
+    // Hopping backwards step-by-step
+    for (let s = fromStep - 1; s >= toStep; s--) {
+      path.push(getPawnCoordinate(color, s, pawnId));
+    }
     return path;
   }
 

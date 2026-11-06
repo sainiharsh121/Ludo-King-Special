@@ -169,16 +169,23 @@ export function calculateMoveOutcome(
       if (capturedPawn) break;
     }
 
-    // Rule 2: Jump Icon check (triggers random 1-5 step jump forward)
+    // Rule 2: Jump Icon check (triggers random 1-5 step jump forward, or backward for dual-power icons)
     const isJumpLanding = Array.isArray(jumpIconIndex)
       ? jumpIconIndex.includes(landingGlobalIdx)
       : (jumpIconIndex !== null && jumpIconIndex !== undefined && landingGlobalIdx === jumpIconIndex);
 
     if (isJumpLanding) {
       usedJumpIconIndex = landingGlobalIdx;
+      // 2 of the 4 jump icons have the backward power along with forward
+      const isDualDirection = Array.isArray(jumpIconIndex)
+        ? (jumpIconIndex.indexOf(landingGlobalIdx) >= 0 && jumpIconIndex.indexOf(landingGlobalIdx) < 2)
+        : false;
+
       const k = Math.floor(Math.random() * 5) + 1; // 1..5
-      jumpSteps = k;
-      let targetJump = toStep + k;
+      const isBackward = isDualDirection && (Math.random() < 0.5);
+      jumpSteps = isBackward ? -k : k;
+      let targetJump = toStep + jumpSteps;
+      if (targetJump < 0) targetJump = 0;
       if (targetJump > 56) targetJump = 56;
       if (rules.mustCaptureToEnterHome && toStep <= 50 && targetJump > 50 && !activePlayer.hasCaptured) {
         targetJump = 50;
