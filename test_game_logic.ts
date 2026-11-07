@@ -45,7 +45,7 @@ const defaultRules: GameRules = {
   bonusOnCapture: true,
   bonusOnHomeReach: true,
   safeZoneMode: 'standard',
-  pawnSpeedMs: 180,
+  pawnSpeedMs: 210,
   autoMoveSingleLegal: true,
 };
 
@@ -150,14 +150,43 @@ console.log('--- TEST SUITE: Ludo Game Rules & Coordinates ---');
   // Quick Mode rules (mustCaptureToEnterHome = true)
   const quickRules: GameRules = { ...defaultRules, mustCaptureToEnterHome: true };
   player.hasCaptured = false;
-  assert(!canPawnMove(player, player.pawns[0], 2, quickRules), 'Quick Mode: Cannot enter home corridor without prior capture');
+  assert(canPawnMove(player, player.pawns[0], 2, quickRules), 'Quick Mode: Uncaptured pawn can move (circles main outer track)');
+  const outcomeWithoutCapture = calculateMoveOutcome([player], player, 0, 2, quickRules);
+  assert(outcomeWithoutCapture.toStep === 0, 'Quick Mode: Pawn circles main outer track wrapping to step 0');
+  assert(outcomeWithoutCapture.reachedHome === false, 'Quick Mode: Uncaptured pawn cannot reach home');
+
   player.hasCaptured = true;
   assert(canPawnMove(player, player.pawns[0], 2, quickRules), 'Quick Mode: Can enter home corridor once capture requirement is satisfied');
+  const outcomeWithCapture = calculateMoveOutcome([player], player, 0, 2, quickRules);
+  assert(outcomeWithCapture.toStep === 52, 'Quick Mode: Pawn enters home corridor step 52 once capture requirement is satisfied');
 
   // Classic Mode rules (mustCaptureToEnterHome = false)
   const classicRules: GameRules = { ...defaultRules, mustCaptureToEnterHome: false };
   player.hasCaptured = false;
   assert(canPawnMove(player, player.pawns[0], 2, classicRules), 'Classic Mode: Can enter home corridor freely without any prior kill/capture');
+  const outcomeClassic = calculateMoveOutcome([player], player, 0, 2, classicRules);
+  assert(outcomeClassic.toStep === 52, 'Classic Mode: Pawn enters home corridor step 52 without capture');
+
+  // Quick Mode deep verification: wrapping across step 50, 51, and back to 0, 1
+  player.hasCaptured = false;
+  player.pawns[0].step = 50;
+  const outcomeRoll1 = calculateMoveOutcome([player], player, 0, 1, quickRules);
+  assert(outcomeRoll1.toStep === 51, 'Quick Mode: Step 50 + roll 1 advances to outer track step 51');
+
+  player.pawns[0].step = 51;
+  const outcomeRollFrom51 = calculateMoveOutcome([player], player, 0, 1, quickRules);
+  assert(outcomeRollFrom51.toStep === 0, 'Quick Mode: Step 51 + roll 1 wraps around to step 0');
+
+  player.pawns[0].step = 48;
+  const outcomeRoll5 = calculateMoveOutcome([player], player, 0, 5, quickRules);
+  assert(outcomeRoll5.toStep === 1, 'Quick Mode: Step 48 + roll 5 wraps around to step 1');
+
+  // getStepPath verification for perimeter wrapping
+  const wrapPath = getStepPath('RED', 50, 1, 0, false, true);
+  assert(wrapPath.length === 3, 'Wrap path from 50 to 1 contains 3 hops (51, 0, 1)');
+  assert(wrapPath[0].row === 6 && wrapPath[0].col === 0, 'Wrap path hop 1 is global track 51 (row 6, col 0)');
+  assert(wrapPath[1].row === 6 && wrapPath[1].col === 1, 'Wrap path hop 2 is global track 0 (row 6, col 1)');
+  assert(wrapPath[2].row === 6 && wrapPath[2].col === 2, 'Wrap path hop 3 is global track 1 (row 6, col 2)');
 }
 
 // 6. Exact Roll to Reach Home (Step 56)

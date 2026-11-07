@@ -22,7 +22,7 @@ const baseRules: GameRules = {
   bonusOnCapture: true,
   bonusOnHomeReach: true,
   safeZoneMode: 'standard',
-  pawnSpeedMs: 180,
+  pawnSpeedMs: 210,
   autoMoveSingleLegal: true,
   freezeStarsEnabled: true,
   jumpIconEnabled: true,
@@ -235,35 +235,35 @@ const setupModalTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/component
 const ludoBoardTsx = fs.readFileSync(path.resolve(process.cwd(), 'src/components/LudoBoard.tsx'), 'utf8');
 const indexCss = fs.readFileSync(path.resolve(process.cwd(), 'src/index.css'), 'utf8');
 
-// App.tsx: default pawnSpeedMs: 180
-assert.ok(appTsx.includes('pawnSpeedMs: 180'), 'App.tsx contains default pawnSpeedMs: 180');
+// App.tsx: default pawnSpeedMs: 210
+assert.ok(appTsx.includes('pawnSpeedMs: 210'), 'App.tsx contains default pawnSpeedMs: 210');
 assert.ok(!appTsx.includes('pawnSpeedMs: 130'), 'App.tsx does NOT contain outdated pawnSpeedMs: 130');
-assert.ok(!appTsx.includes('pawnSpeedMs: 210'), 'App.tsx does NOT contain outdated pawnSpeedMs: 210');
+assert.ok(!appTsx.includes('pawnSpeedMs: 180'), 'App.tsx does NOT contain outdated pawnSpeedMs: 180');
 
-// PassNPlayClassicSetupScreen.tsx: pawnSpeedMs: 180
-assert.ok(classicTsx.includes('pawnSpeedMs: 180'), 'PassNPlayClassicSetupScreen.tsx contains pawnSpeedMs: 180');
+// PassNPlayClassicSetupScreen.tsx: pawnSpeedMs: 210
+assert.ok(classicTsx.includes('pawnSpeedMs: 210'), 'PassNPlayClassicSetupScreen.tsx contains pawnSpeedMs: 210');
 assert.ok(!classicTsx.includes('pawnSpeedMs: 130'), 'PassNPlayClassicSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 130');
-assert.ok(!classicTsx.includes('pawnSpeedMs: 210'), 'PassNPlayClassicSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 210');
+assert.ok(!classicTsx.includes('pawnSpeedMs: 180'), 'PassNPlayClassicSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 180');
 
-// PassNPlayTeamUpSetupScreen.tsx: pawnSpeedMs: 180
-assert.ok(teamUpTsx.includes('pawnSpeedMs: 180'), 'PassNPlayTeamUpSetupScreen.tsx contains pawnSpeedMs: 180');
+// PassNPlayTeamUpSetupScreen.tsx: pawnSpeedMs: 210
+assert.ok(teamUpTsx.includes('pawnSpeedMs: 210'), 'PassNPlayTeamUpSetupScreen.tsx contains pawnSpeedMs: 210');
 assert.ok(!teamUpTsx.includes('pawnSpeedMs: 130'), 'PassNPlayTeamUpSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 130');
-assert.ok(!teamUpTsx.includes('pawnSpeedMs: 210'), 'PassNPlayTeamUpSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 210');
+assert.ok(!teamUpTsx.includes('pawnSpeedMs: 180'), 'PassNPlayTeamUpSetupScreen.tsx does NOT contain outdated pawnSpeedMs: 180');
 
-// SetupModal.tsx: pawnSpeedMs 180 (normal) and 50 (turbo)
-assert.ok(setupModalTsx.includes('pawnSpeedMs: 180') || setupModalTsx.includes('? 50 : 180'), 'SetupModal.tsx has 180ms normal');
+// SetupModal.tsx: pawnSpeedMs 210 (normal) and 50 (turbo)
+assert.ok(setupModalTsx.includes('pawnSpeedMs: 210') || setupModalTsx.includes('? 50 : 210'), 'SetupModal.tsx has 210ms normal');
 assert.ok(!setupModalTsx.includes('pawnSpeedMs: 130'), 'SetupModal.tsx does NOT contain outdated 130ms speed');
-assert.ok(!setupModalTsx.includes('210'), 'SetupModal.tsx does NOT contain outdated 210ms speed');
+assert.ok(!setupModalTsx.includes('180'), 'SetupModal.tsx does NOT contain outdated 180ms speed');
 
-// LudoBoard.tsx: default pawnSpeedMs = 180 and cubic-bezier ease
-assert.ok(ludoBoardTsx.includes('pawnSpeedMs = 180'), 'LudoBoard.tsx has default prop pawnSpeedMs = 180');
+// LudoBoard.tsx: default pawnSpeedMs = 210 and cubic-bezier ease
+assert.ok(ludoBoardTsx.includes('pawnSpeedMs = 210'), 'LudoBoard.tsx has default prop pawnSpeedMs = 210');
 assert.ok(ludoBoardTsx.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'LudoBoard.tsx uses cubic-bezier(0.25, 1, 0.5, 1) ease');
 
-// index.css: .pawn-hop bounce keyframe duration synchronized (0.18s)
+// index.css: .pawn-hop bounce keyframe duration synchronized (0.21s)
 assert.ok(indexCss.includes('.pawn-hop'), 'index.css defines .pawn-hop');
-assert.ok(indexCss.includes('0.18s'), 'index.css synchronizes .pawn-hop duration to 0.18s');
+assert.ok(indexCss.includes('0.21s'), 'index.css synchronizes .pawn-hop duration to 0.21s');
 assert.ok(indexCss.includes('cubic-bezier(0.25, 1, 0.5, 1)'), 'index.css uses cubic-bezier(0.25, 1, 0.5, 1)');
-console.log('✅ PASS: Token hopping speed (180ms) & smooth transition synchronized across all files');
+console.log('✅ PASS: Token hopping speed (210ms) & smooth transition synchronized across all files');
 
 // =========================================================================
 // 6. BOTTOM GLASSMORPHIC MODE BADGE & NO IRRITATING TURN/PULSE DOTS

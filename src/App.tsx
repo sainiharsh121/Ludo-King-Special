@@ -45,7 +45,7 @@ import {
   initializeHazardState
 } from './utils/boardCoordinates';
 import { createPRNG } from './engine/rng';
-import { MoreVertical, LogOut } from 'lucide-react';
+import { MoreVertical, LogOut, Unlock } from 'lucide-react';
 import { SavedGame } from './types/ludo';
 
 const appRng = createPRNG(Date.now() ^ 0xa5a5a5a5);
@@ -296,7 +296,7 @@ export const App: React.FC = () => {
       bonusOnCapture: true,
       bonusOnHomeReach: true,
       safeZoneMode: 'standard',
-      pawnSpeedMs: 180,
+      pawnSpeedMs: 210,
       autoMoveSingleLegal: true,
       freezeStarsEnabled: true,
       jumpIconEnabled: true,
@@ -308,6 +308,11 @@ export const App: React.FC = () => {
       jumpIconRespawnMaxMs: 180000, // 3 min
     }
   );
+
+  const [homeUnlockAnimation, setHomeUnlockAnimation] = useState<{
+    color: PlayerColor;
+    playerName: string;
+  } | null>(null);
 
   const [players, setPlayers] = useState<Player[]>(initialMatch?.players || INITIAL_PLAYERS);
   const [activePlayerIndex, setActivePlayerIndex] = useState<number>(initialMatch?.activePlayerIndex ?? 0);
@@ -579,7 +584,14 @@ export const App: React.FC = () => {
       jumpIconIndices
     );
 
-    const stepPath = getStepPath(controllingPlayer.color, outcome.fromStep, outcome.toStep, pawnId);
+    const isWrapping = Boolean(
+      rules.mustCaptureToEnterHome &&
+      !controllingPlayer.hasCaptured &&
+      outcome.toStep < outcome.fromStep &&
+      outcome.fromStep >= 46
+    );
+    const willEnterCorridor = outcome.toStep >= 51 && outcome.toStep <= 56 && (controllingPlayer.hasCaptured || !rules.mustCaptureToEnterHome);
+    const stepPath = getStepPath(controllingPlayer.color, outcome.fromStep, outcome.toStep, pawnId, willEnterCorridor, isWrapping);
 
     // Initial starting coordinate
     const startCoord = getPawnCoordinate(controllingPlayer.color, outcome.fromStep, pawnId);
@@ -625,7 +637,22 @@ export const App: React.FC = () => {
       }
       await new Promise(res => setTimeout(res, 160));
 
-      const jumpPath = getStepPath(controllingPlayer.color, outcome.toStep, outcome.jumpToStep, pawnId);
+      const isJumpWrapping = Boolean(
+        rules.mustCaptureToEnterHome &&
+        !controllingPlayer.hasCaptured &&
+        outcome.jumpToStep !== undefined &&
+        outcome.jumpToStep < outcome.toStep &&
+        outcome.jumpSteps !== undefined &&
+        outcome.jumpSteps > 0
+      );
+      const jumpPath = getStepPath(
+        controllingPlayer.color,
+        outcome.toStep,
+        outcome.jumpToStep,
+        pawnId,
+        false,
+        isJumpWrapping
+      );
       for (let i = 0; i < jumpPath.length; i++) {
         const targetCoord = jumpPath[i];
         setAnimatingPawn({
@@ -661,9 +688,11 @@ export const App: React.FC = () => {
         const currentRanks = players.filter(pl => pl.rank !== null).length;
         const updatedPawns = p.pawns.map(item => {
           if (item.id === pawnId) {
+            const isCorridor = finalToStep >= 51 && finalToStep <= 55 && (p.hasCaptured || effectiveCaptured !== null || !rules.mustCaptureToEnterHome);
             return {
               ...item,
               step: finalToStep,
+              inHomeCorridor: isCorridor,
               isHome: finalReachedHome,
               isFrozen: outcome.landedOnFreezeStar ? true : item.isFrozen,
               frozenTurnsLeft: outcome.landedOnFreezeStar ? 1 : item.frozenTurnsLeft,
@@ -718,6 +747,18 @@ export const App: React.FC = () => {
       soundEngine.playCaptureSound();
       setNotification(`💥 Captured ${effectiveCaptured.playerColor} token! Bonus Roll!`);
 
+      // Quick Mode Home Column Unlock animation on first capture:
+      if (rules.mustCaptureToEnterHome && !controllingPlayer.hasCaptured) {
+        soundEngine.playPawnUnlock();
+        setHomeUnlockAnimation({
+          color: controllingPlayer.color,
+          playerName: controllingPlayer.name,
+        });
+        setTimeout(() => {
+          setHomeUnlockAnimation(null);
+        }, 2200);
+      }
+
       const victim = effectiveCaptured;
       const victimCoord = getPawnCoordinate(victim.playerColor, victim.step, victim.pawnId);
 
@@ -753,7 +794,7 @@ export const App: React.FC = () => {
 
       // Landed safely back into its dedicated yard base socket
       soundEngine.playPawnUnlock();
-      await new Promise(res => setTimeout(res, rules.pawnSpeedMs || 180));
+      await new Promise(res => setTimeout(res, rules.pawnSpeedMs || 210));
 
       // Reset captured victim pawn in players state
       updatedPlayers = updatedPlayers.map(p => {
@@ -1010,7 +1051,12 @@ export const App: React.FC = () => {
     newRules: GameRules,
     playerAvatars?: Record<PlayerColor, string>
   ) => {
-    setRules(newRules);
+    const effectiveRules: GameRules = {
+      ...newRules,
+      mustCaptureToEnterHome: gameMode === 'QUICK_MODE' ? true : newRules.mustCaptureToEnterHome,
+      pawnSpeedMs: newRules.pawnSpeedMs || 210,
+    };
+    setRules(effectiveRules);
 
     const activeColors: PlayerColor[] = 
       playerCount === 4
@@ -1110,7 +1156,12 @@ export const App: React.FC = () => {
     newRules: GameRules,
     mode: GameMode = 'PASS_N_PLAY'
   ) => {
-    setRules(newRules);
+    const effectiveRules: GameRules = {
+      ...newRules,
+      mustCaptureToEnterHome: (mode === 'QUICK_MODE' || gameMode === 'QUICK_MODE') ? true : newRules.mustCaptureToEnterHome,
+      pawnSpeedMs: newRules.pawnSpeedMs || 210,
+    };
+    setRules(effectiveRules);
     setGameMode(mode);
     setPlayers(newPlayers);
     const firstActiveIdx = newPlayers.findIndex(p => p.isActive);
@@ -1374,7 +1425,7 @@ export const App: React.FC = () => {
                 bonusOnCapture: true,
                 bonusOnHomeReach: true,
                 safeZoneMode: 'standard',
-                pawnSpeedMs: 180,
+                pawnSpeedMs: 210,
                 autoMoveSingleLegal: true,
                 friendlyKill: true,
                 oneTokenOut: false,
@@ -1446,6 +1497,8 @@ export const App: React.FC = () => {
               movablePlayerId={getControllingPlayer(activePlayer, players, gameMode).id}
               selectedTokenId={selectedToken}
               pawnSpeedMs={rules.pawnSpeedMs}
+              rules={rules}
+              unlockedPlayerColor={homeUnlockAnimation?.color ?? null}
             />
 
             {/* Bottom HUDs: Blue (Bottom-Left) & Yellow (Bottom-Right) */}
@@ -1558,6 +1611,24 @@ export const App: React.FC = () => {
           } catch {}
         }}
       />
+
+      {/* Quick Mode Home Column Unlocked Pop Animation */}
+      {homeUnlockAnimation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none animate-in fade-in zoom-in duration-300">
+          <div className="relative flex flex-col items-center gap-2 p-5 rounded-3xl bg-slate-900/95 border-2 border-amber-400/90 shadow-2xl backdrop-blur-xl max-w-xs text-center animate-bounce">
+            <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/40">
+              <Unlock className="w-8 h-8 text-slate-950 stroke-[2.5]" />
+            </div>
+            <div className="text-sm font-black text-amber-300 tracking-wider uppercase">
+              Home Column Unlocked!
+            </div>
+            <div className="text-xs font-bold text-white leading-snug">
+              {homeUnlockAnimation.playerName} killed a token!<br />
+              Tokens can now enter the home column!
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Exit Confirmation Dialog (Simple theme matching game) */}
       {isExitConfirmOpen && (

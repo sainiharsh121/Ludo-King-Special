@@ -3,10 +3,11 @@ export type PlayerColor = 'RED' | 'GREEN' | 'YELLOW' | 'BLUE';
 export interface Pawn {
   id: number; // 0, 1, 2, 3
   color: PlayerColor;
-  step: number; // -1: Base yard, 0..50: Track steps, 51..55: Home corridor, 56: Reached Home
+  step: number; // -1: Base yard, 0..51: Track steps, 51..55: Home corridor, 56: Reached Home
   isHome: boolean;
   isFrozen?: boolean; // True if token stepped on a Freeze Star (cannot move)
   frozenTurnsLeft?: number; // Turns left until ice thaws
+  inHomeCorridor?: boolean; // True if pawn has entered the home corridor (51..55)
 }
 
 export interface Player {

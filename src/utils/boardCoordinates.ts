@@ -313,55 +313,93 @@ export function isSafeGlobalCell(globalIndex: number, mode: SafeZoneMode): boole
   return ALL_SAFE_INDICES.includes(globalIndex);
 }
 
-// Convert player step (0..50) to global track index (0..51)
+// Convert player step (0..51) to global track index (0..51)
 export function stepToGlobalIndex(color: PlayerColor, step: number): number | null {
-  if (step < 0 || step > 50) return null;
+  if (step < 0 || step > 51) return null;
   const offset = COLOR_OFFSETS[color];
   return (offset + step) % 52;
 }
 
 // Get Board Grid Coordinate for any pawn state
-export function getPawnCoordinate(color: PlayerColor, step: number, pawnId: number): Coordinate {
+export function getPawnCoordinate(
+  color: PlayerColor,
+  step: number,
+  pawnId: number,
+  inHomeCorridor?: boolean
+): Coordinate {
   // 1. In Yard Base
   if (step === -1) {
     return BASE_SOCKETS[color][pawnId] || { row: 0, col: 0 };
   }
 
-  // 2. On Main Perimeter Track (0..50)
+  // 2. Center Home Triangle (56)
+  if (step === 56) {
+    return HOME_CENTERS[color];
+  }
+
+  // 3. In Colored Home Corridor (51..55)
+  if (inHomeCorridor === true && step >= 51 && step <= 55) {
+    const corridorIdx = step - 51;
+    return HOME_CORRIDORS[color][corridorIdx];
+  }
+
+  // 4. On Main Perimeter Track (0..51)
+  if (inHomeCorridor === false && step >= 0 && step <= 51) {
+    const globalIdx = stepToGlobalIndex(color, step)!;
+    return GLOBAL_TRACK[globalIdx];
+  }
+
+  // 5. Default resolution when inHomeCorridor is not specified (backwards-compatible)
   if (step >= 0 && step <= 50) {
     const globalIdx = stepToGlobalIndex(color, step)!;
     return GLOBAL_TRACK[globalIdx];
   }
 
-  // 3. In Colored Home Corridor (51..55)
   if (step >= 51 && step <= 55) {
     const corridorIdx = step - 51;
     return HOME_CORRIDORS[color][corridorIdx];
   }
 
-  // 4. Center Home Triangle (56)
   return HOME_CENTERS[color];
 }
 
-// Build list of coordinates from fromStep to toStep for animation hopping (supports both forward and backward steps)
-export function getStepPath(color: PlayerColor, fromStep: number, toStep: number, pawnId: number): Coordinate[] {
+// Build list of coordinates from fromStep to toStep for animation hopping (supports forward, backward, corridor, and perimeter looping)
+export function getStepPath(
+  color: PlayerColor,
+  fromStep: number,
+  toStep: number,
+  pawnId: number,
+  inHomeCorridor: boolean = false,
+  isWrapping: boolean = false
+): Coordinate[] {
   const path: Coordinate[] = [];
   if (fromStep === -1) {
     // Exiting base into start tile directly without in-place bounce inside yard socket
-    path.push(getPawnCoordinate(color, 0, pawnId));
+    path.push(getPawnCoordinate(color, 0, pawnId, false));
+    return path;
+  }
+
+  // Perimeter track forward looping (e.g. step 50 -> 51 -> 0 -> 1)
+  if (isWrapping || (!inHomeCorridor && toStep < fromStep && toStep >= 0 && fromStep >= 46)) {
+    const totalSteps = (toStep - fromStep + 52) % 52;
+    for (let i = 1; i <= totalSteps; i++) {
+      const s = (fromStep + i) % 52;
+      path.push(getPawnCoordinate(color, s, pawnId, false));
+    }
     return path;
   }
 
   if (toStep < fromStep) {
     // Hopping backwards step-by-step
     for (let s = fromStep - 1; s >= toStep; s--) {
-      path.push(getPawnCoordinate(color, s, pawnId));
+      path.push(getPawnCoordinate(color, s, pawnId, inHomeCorridor));
     }
     return path;
   }
 
   for (let s = fromStep + 1; s <= toStep; s++) {
-    path.push(getPawnCoordinate(color, s, pawnId));
+    const isCorridor = inHomeCorridor && s >= 51;
+    path.push(getPawnCoordinate(color, s, pawnId, isCorridor));
   }
   return path;
 }

@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { Player, Pawn, PlayerColor, Coordinate, TurnPhase, BoardTheme, TokenId } from '../types/ludo';
+import { Player, Pawn, PlayerColor, Coordinate, TurnPhase, BoardTheme, TokenId, GameRules } from '../types/ludo';
 import { 
   getPawnCoordinate, 
   GLOBAL_TRACK,
 } from '../utils/boardCoordinates';
-import { Star, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Zap, Crown } from 'lucide-react';
+import { Star, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Zap, Crown, Lock, Unlock } from 'lucide-react';
 import { TokenPreviewSVG, getCanonicalFamily } from './TokenPreviewSVG';
 
 interface LudoBoardProps {
@@ -28,6 +28,8 @@ interface LudoBoardProps {
   movablePlayerId?: string;
   selectedTokenId?: TokenId;
   pawnSpeedMs?: number;
+  rules?: GameRules;
+  unlockedPlayerColor?: PlayerColor | null;
 }
 
 export const LudoBoard: React.FC<LudoBoardProps> = ({
@@ -43,7 +45,9 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
   jumpIconIndices = [],
   movablePlayerId,
   selectedTokenId,
-  pawnSpeedMs = 180,
+  pawnSpeedMs = 210,
+  rules,
+  unlockedPlayerColor = null,
 }) => {
   // Quadrant visual configurations dynamically derived from player choices.
   // In 2-player (or 3-player) matches, if active players pick colors like Green or Blue,
@@ -347,7 +351,7 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
         return;
       }
 
-      const coord = getPawnCoordinate(p.color, pawn.step, pawn.id);
+      const coord = getPawnCoordinate(p.color, pawn.step, pawn.id, pawn.inHomeCorridor);
       const isLegal =
         p.id === (movablePlayerId ?? activePlayer.id) &&
         phase === 'SELECTING_PAWN' &&
@@ -372,6 +376,32 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
     if (!pawnsByCell[key]) pawnsByCell[key] = [];
     pawnsByCell[key].push(item);
   });
+
+  // Home Column Lock state for Quick Mode (mustCaptureToEnterHome)
+  const isRedLocked = Boolean(
+    rules?.mustCaptureToEnterHome &&
+    redConfig.isActive &&
+    !players.find(p => p.color === 'RED')?.hasCaptured &&
+    players.find(p => p.color === 'RED')?.rank === null
+  );
+  const isGreenLocked = Boolean(
+    rules?.mustCaptureToEnterHome &&
+    greenConfig.isActive &&
+    !players.find(p => p.color === 'GREEN')?.hasCaptured &&
+    players.find(p => p.color === 'GREEN')?.rank === null
+  );
+  const isYellowLocked = Boolean(
+    rules?.mustCaptureToEnterHome &&
+    yellowConfig.isActive &&
+    !players.find(p => p.color === 'YELLOW')?.hasCaptured &&
+    players.find(p => p.color === 'YELLOW')?.rank === null
+  );
+  const isBlueLocked = Boolean(
+    rules?.mustCaptureToEnterHome &&
+    blueConfig.isActive &&
+    !players.find(p => p.color === 'BLUE')?.hasCaptured &&
+    players.find(p => p.color === 'BLUE')?.rank === null
+  );
 
   // Stack rendering (Part 11): 2 tokens at scale 0.85 diagonal, 3-4 at scale 0.65 in 2x2 grid (fits inside cell)
   const getClusterOffset = (index: number, total: number) => {
@@ -514,6 +544,20 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     style={{ color: 'var(--grid-line)' }}
                   />
                 )}
+                {isGreenCorridor && row === 1 && isGreenLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="p-0.5 rounded-full bg-slate-900/80 border border-amber-400/90 shadow-md flex items-center justify-center animate-pulse">
+                      <Lock className="w-3.5 h-3.5 text-amber-300 drop-shadow" />
+                    </div>
+                  </div>
+                )}
+                {isGreenCorridor && row === 1 && unlockedPlayerColor === 'GREEN' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                    <div className="p-0.5 rounded-full bg-emerald-500/90 border border-emerald-300 shadow-lg flex items-center justify-center animate-bounce scale-125">
+                      <Unlock className="w-4 h-4 text-white drop-shadow" />
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -585,6 +629,20 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     className="w-4 h-4 stroke-[3] drop-shadow"
                     style={{ color: 'var(--grid-line)' }}
                   />
+                )}
+                {isRedCorridor && col === 1 && isRedLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="p-0.5 rounded-full bg-slate-900/80 border border-amber-400/90 shadow-md flex items-center justify-center animate-pulse">
+                      <Lock className="w-3.5 h-3.5 text-amber-300 drop-shadow" />
+                    </div>
+                  </div>
+                )}
+                {isRedCorridor && col === 1 && unlockedPlayerColor === 'RED' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                    <div className="p-0.5 rounded-full bg-emerald-500/90 border border-emerald-300 shadow-lg flex items-center justify-center animate-bounce scale-125">
+                      <Unlock className="w-4 h-4 text-white drop-shadow" />
+                    </div>
+                  </div>
                 )}
               </div>
             );
@@ -679,6 +737,20 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     style={{ color: 'var(--grid-line)' }}
                   />
                 )}
+                {isYellowCorridor && col === 4 && isYellowLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="p-0.5 rounded-full bg-slate-900/80 border border-amber-400/90 shadow-md flex items-center justify-center animate-pulse">
+                      <Lock className="w-3.5 h-3.5 text-amber-300 drop-shadow" />
+                    </div>
+                  </div>
+                )}
+                {isYellowCorridor && col === 4 && unlockedPlayerColor === 'YELLOW' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                    <div className="p-0.5 rounded-full bg-emerald-500/90 border border-emerald-300 shadow-lg flex items-center justify-center animate-bounce scale-125">
+                      <Unlock className="w-4 h-4 text-white drop-shadow" />
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -750,6 +822,20 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     className="w-4 h-4 stroke-[3] drop-shadow"
                     style={{ color: 'var(--grid-line)' }}
                   />
+                )}
+                {isBlueCorridor && rowInArm === 4 && isBlueLocked && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    <div className="p-0.5 rounded-full bg-slate-900/80 border border-amber-400/90 shadow-md flex items-center justify-center animate-pulse">
+                      <Lock className="w-3.5 h-3.5 text-amber-300 drop-shadow" />
+                    </div>
+                  </div>
+                )}
+                {isBlueCorridor && rowInArm === 4 && unlockedPlayerColor === 'BLUE' && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                    <div className="p-0.5 rounded-full bg-emerald-500/90 border border-emerald-300 shadow-lg flex items-center justify-center animate-bounce scale-125">
+                      <Unlock className="w-4 h-4 text-white drop-shadow" />
+                    </div>
+                  </div>
                 )}
               </div>
             );

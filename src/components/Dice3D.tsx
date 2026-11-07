@@ -156,7 +156,7 @@ export const Dice3D: React.FC<Dice3DProps> = ({
         disabled={!isInteractive}
         type="button"
         aria-label="Roll Dice"
-        className={`dice-scene relative cursor-pointer outline-none transition-transform duration-200 p-0.5 rounded-xl group ${
+        className={`dice-scene relative cursor-pointer outline-none transition-transform duration-200 border-0 bg-transparent shadow-none p-0.5 rounded-xl group ${
           isInteractive ? 'hover:scale-105 active:scale-95' : 'cursor-default'
         }`}
       >
@@ -167,14 +167,23 @@ export const Dice3D: React.FC<Dice3DProps> = ({
 
         <div
           className={`dice-cube ${isRollingActive ? 'dice-tumbling-fast' : ''}`}
-          data-face={activeFace}
+          data-face={isRollingActive ? activeFace : 1}
+          style={!isRollingActive ? { transform: 'none' } : undefined}
         >
-          <div className="dice-face face-front">{renderFacePips(1)}</div>
-          <div className="dice-face face-top">{renderFacePips(2)}</div>
-          <div className="dice-face face-right">{renderFacePips(3)}</div>
-          <div className="dice-face face-left">{renderFacePips(4)}</div>
-          <div className="dice-face face-bottom">{renderFacePips(5)}</div>
-          <div className="dice-face face-back">{renderFacePips(6)}</div>
+          {isRollingActive ? (
+            <>
+              <div className="dice-face face-front">{renderFacePips(1)}</div>
+              <div className="dice-face face-top">{renderFacePips(2)}</div>
+              <div className="dice-face face-right">{renderFacePips(3)}</div>
+              <div className="dice-face face-left">{renderFacePips(4)}</div>
+              <div className="dice-face face-bottom">{renderFacePips(5)}</div>
+              <div className="dice-face face-back">{renderFacePips(6)}</div>
+            </>
+          ) : (
+            <div className="dice-face face-front" style={{ transform: 'none' }}>
+              {renderFacePips(value)}
+            </div>
+          )}
         </div>
       </button>
     </div>

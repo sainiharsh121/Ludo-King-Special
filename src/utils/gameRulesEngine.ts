@@ -62,18 +62,17 @@ export function canPawnMove(
   }
 
   // Case 2: Pawn is on track or in home corridor
+  // Rule: In Quick Mode (mustCaptureToEnterHome = true), token CANNOT enter home corridor without a capture.
+  // Instead, it continues circling the main outer track indefinitely (all rolls 1..6 are valid).
+  if (rules.mustCaptureToEnterHome && !player.hasCaptured) {
+    return true;
+  }
+
   const targetStep = pawn.step + roll;
 
   // Exact roll required to reach home center (step 56)
   if (targetStep > 56) {
     return false;
-  }
-
-  // Rule: Must capture at least 1 opponent token before entering home corridor (step 51..56)
-  if (rules.mustCaptureToEnterHome) {
-    if (pawn.step <= 50 && targetStep > 50 && !player.hasCaptured) {
-      return false;
-    }
   }
 
   return true;
@@ -100,8 +99,10 @@ export function calculateMoveOutcome(
 ): MoveOutcome {
   const pawn = activePlayer.pawns[pawnId];
   const fromStep = pawn.step;
-  const toStep = fromStep === -1 ? 0 : fromStep + roll;
-  const reachedHome = toStep === 56;
+  const mustCircleTrack = Boolean(rules.mustCaptureToEnterHome && !activePlayer.hasCaptured);
+
+  const toStep = fromStep === -1 ? 0 : (mustCircleTrack ? (fromStep + roll) % 52 : fromStep + roll);
+  const reachedHome = !mustCircleTrack && toStep === 56;
 
   let capturedPawn: MoveOutcome['capturedPawn'] = null;
   let landedOnSafeCell = false;
@@ -112,8 +113,9 @@ export function calculateMoveOutcome(
   let jumpToStep: number | undefined;
   let jumpCapturedPawn: MoveOutcome['capturedPawn'] = null;
 
-  // Check captures if landing on global track (0..50)
-  if (toStep >= 0 && toStep <= 50) {
+  // Check captures if landing on global track
+  const isOnTrack = !reachedHome && toStep >= 0 && (mustCircleTrack ? toStep <= 51 : toStep <= 50);
+  if (isOnTrack) {
     const landingGlobalIdx = stepToGlobalIndex(activePlayer.color, toStep)!;
     
     // Freeze Star check: sets landedOnFreezeStar flag and registers consumed index
@@ -147,7 +149,8 @@ export function calculateMoveOutcome(
       }
 
       for (const oppPawn of opponent.pawns) {
-        if (oppPawn.step >= 0 && oppPawn.step <= 50 && !oppPawn.isHome) {
+        const oppOnTrack = oppPawn.step >= 0 && (oppPawn.step <= 50 || (oppPawn.step === 51 && !oppPawn.inHomeCorridor)) && !oppPawn.isHome;
+        if (oppOnTrack) {
           const oppGlobalIdx = stepToGlobalIndex(opponent.color, oppPawn.step);
           if (oppGlobalIdx === landingGlobalIdx) {
             // Opponent pawn is captured if:
@@ -184,16 +187,19 @@ export function calculateMoveOutcome(
       const k = Math.floor(Math.random() * 5) + 1; // 1..5
       const isBackward = isDualDirection && (Math.random() < 0.5);
       jumpSteps = isBackward ? -k : k;
-      let targetJump = toStep + jumpSteps;
-      if (targetJump < 0) targetJump = 0;
-      if (targetJump > 56) targetJump = 56;
-      if (rules.mustCaptureToEnterHome && toStep <= 50 && targetJump > 50 && !activePlayer.hasCaptured) {
-        targetJump = 50;
+      let targetJump: number;
+      if (mustCircleTrack) {
+        targetJump = (toStep + jumpSteps + 52) % 52;
+      } else {
+        targetJump = toStep + jumpSteps;
+        if (targetJump < 0) targetJump = 0;
+        if (targetJump > 56) targetJump = 56;
       }
       jumpToStep = targetJump;
 
       // Check secondary landing effects after jump
-      if (jumpToStep >= 0 && jumpToStep <= 50) {
+      const isJumpOnTrack = jumpToStep >= 0 && (mustCircleTrack ? jumpToStep <= 51 : jumpToStep <= 50);
+      if (isJumpOnTrack) {
         const jumpLandingGlobalIdx = stepToGlobalIndex(activePlayer.color, jumpToStep)!;
         const jumpOnFreeze = Boolean(freezeStarIndices && freezeStarIndices.includes(jumpLandingGlobalIdx));
         const jumpStandardSafe = isSafeGlobalCell(jumpLandingGlobalIdx, rules.safeZoneMode);
@@ -209,7 +215,8 @@ export function calculateMoveOutcome(
           if (isTeammate && rules.friendlyKill === false) continue;
 
           for (const oppPawn of opponent.pawns) {
-            if (oppPawn.step >= 0 && oppPawn.step <= 50 && !oppPawn.isHome) {
+            const oppOnTrack = oppPawn.step >= 0 && (oppPawn.step <= 50 || (oppPawn.step === 51 && !oppPawn.inHomeCorridor)) && !oppPawn.isHome;
+            if (oppOnTrack) {
               const oppGlobalIdx = stepToGlobalIndex(opponent.color, oppPawn.step);
               if (oppGlobalIdx === jumpLandingGlobalIdx) {
                 if (!jumpStandardSafe || oppPawn.isFrozen) {
