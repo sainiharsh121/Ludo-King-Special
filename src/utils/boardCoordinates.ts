@@ -405,11 +405,16 @@ export function getStepPath(
 }
 
 // Build reverse list of coordinates for captured token to return home along its exact path
-export function getReturnPath(color: PlayerColor, fromStep: number, pawnId: number): Coordinate[] {
+export function getReturnPath(
+  color: PlayerColor,
+  fromStep: number,
+  pawnId: number,
+  inHomeCorridor: boolean = false
+): Coordinate[] {
   const path: Coordinate[] = [];
   // Retrace every single cell in reverse from (fromStep - 1) down to 0 (start square)
   for (let s = fromStep - 1; s >= 0; s--) {
-    path.push(getPawnCoordinate(color, s, pawnId));
+    path.push(getPawnCoordinate(color, s, pawnId, inHomeCorridor && s >= 51));
   }
   // Final destination: back into its own dedicated yard base socket (-1)
   path.push(BASE_SOCKETS[color][pawnId]);

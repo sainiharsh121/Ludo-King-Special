@@ -584,17 +584,36 @@ export const App: React.FC = () => {
       jumpIconIndices
     );
 
+    const movingPawn = controllingPlayer.pawns.find(p => p.id === pawnId);
+    const isPastEntranceOnTrack = Boolean(movingPawn?.inHomeCorridor === false && outcome.fromStep === 51);
+    const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !controllingPlayer.hasCaptured);
     const isWrapping = Boolean(
-      rules.mustCaptureToEnterHome &&
-      !controllingPlayer.hasCaptured &&
-      outcome.toStep < outcome.fromStep &&
-      outcome.fromStep >= 46
+      isHomeLocked ||
+      isPastEntranceOnTrack ||
+      (movingPawn?.inHomeCorridor === false && outcome.toStep < outcome.fromStep && outcome.fromStep >= 46)
     );
-    const willEnterCorridor = outcome.toStep >= 51 && outcome.toStep <= 56 && (controllingPlayer.hasCaptured || !rules.mustCaptureToEnterHome);
-    const stepPath = getStepPath(controllingPlayer.color, outcome.fromStep, outcome.toStep, pawnId, willEnterCorridor, isWrapping);
+    const willEnterCorridor = Boolean(
+      !isHomeLocked &&
+      !isPastEntranceOnTrack &&
+      outcome.toStep >= 51 &&
+      outcome.toStep <= 56
+    );
+    const stepPath = getStepPath(
+      controllingPlayer.color,
+      outcome.fromStep,
+      outcome.toStep,
+      pawnId,
+      willEnterCorridor,
+      isWrapping
+    );
 
-    // Initial starting coordinate
-    const startCoord = getPawnCoordinate(controllingPlayer.color, outcome.fromStep, pawnId);
+    // Initial starting coordinate with corridor awareness
+    const startCoord = getPawnCoordinate(
+      controllingPlayer.color,
+      outcome.fromStep,
+      pawnId,
+      movingPawn?.inHomeCorridor
+    );
     setAnimatingPawn({
       color: controllingPlayer.color,
       pawnId,
@@ -638,19 +657,25 @@ export const App: React.FC = () => {
       await new Promise(res => setTimeout(res, 160));
 
       const isJumpWrapping = Boolean(
-        rules.mustCaptureToEnterHome &&
-        !controllingPlayer.hasCaptured &&
+        (isHomeLocked || isPastEntranceOnTrack) &&
         outcome.jumpToStep !== undefined &&
         outcome.jumpToStep < outcome.toStep &&
         outcome.jumpSteps !== undefined &&
         outcome.jumpSteps > 0
+      );
+      const isJumpEnteringCorridor = Boolean(
+        !isHomeLocked &&
+        !isPastEntranceOnTrack &&
+        outcome.jumpToStep !== undefined &&
+        outcome.jumpToStep >= 51 &&
+        outcome.jumpToStep <= 56
       );
       const jumpPath = getStepPath(
         controllingPlayer.color,
         outcome.toStep,
         outcome.jumpToStep,
         pawnId,
-        false,
+        isJumpEnteringCorridor,
         isJumpWrapping
       );
       for (let i = 0; i < jumpPath.length; i++) {
@@ -688,7 +713,11 @@ export const App: React.FC = () => {
         const currentRanks = players.filter(pl => pl.rank !== null).length;
         const updatedPawns = p.pawns.map(item => {
           if (item.id === pawnId) {
-            const isCorridor = finalToStep >= 51 && finalToStep <= 55 && (p.hasCaptured || effectiveCaptured !== null || !rules.mustCaptureToEnterHome);
+            const isCorridor = Boolean(
+              (willEnterCorridor || (outcome.jumpToStep !== undefined && !isHomeLocked && !isPastEntranceOnTrack && outcome.jumpToStep >= 51)) &&
+              finalToStep >= 51 &&
+              finalToStep <= 55
+            );
             return {
               ...item,
               step: finalToStep,
@@ -760,7 +789,14 @@ export const App: React.FC = () => {
       }
 
       const victim = effectiveCaptured;
-      const victimCoord = getPawnCoordinate(victim.playerColor, victim.step, victim.pawnId);
+      const victimPlayer = players.find(p => p.color === victim.playerColor);
+      const victimPawnObj = victimPlayer?.pawns.find(p => p.id === victim.pawnId);
+      const victimCoord = getPawnCoordinate(
+        victim.playerColor,
+        victim.step,
+        victim.pawnId,
+        victimPawnObj?.inHomeCorridor ?? false
+      );
 
       // Instantly position animatingPawn on the victim token to hide its static board representation
       setAnimatingPawn({
@@ -775,7 +811,12 @@ export const App: React.FC = () => {
       await new Promise(res => setTimeout(res, 120));
 
       // Retrace backwards through every single cell along the perimeter track to start tile (step 0), then into base socket
-      const returnPath = getReturnPath(victim.playerColor, victim.step, victim.pawnId);
+      const returnPath = getReturnPath(
+        victim.playerColor,
+        victim.step,
+        victim.pawnId,
+        victimPawnObj?.inHomeCorridor ?? false
+      );
       const rewindStepMs = Math.max(28, Math.min(48, Math.round(900 / Math.max(1, returnPath.length))));
 
       for (let i = 0; i < returnPath.length; i++) {

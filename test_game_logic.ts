@@ -181,6 +181,17 @@ console.log('--- TEST SUITE: Ludo Game Rules & Coordinates ---');
   const outcomeRoll5 = calculateMoveOutcome([player], player, 0, 5, quickRules);
   assert(outcomeRoll5.toStep === 1, 'Quick Mode: Step 48 + roll 5 wraps around to step 1');
 
+  // Edge case fix verification: pawn on outer track step 51 with hasCaptured = true
+  player.hasCaptured = true;
+  player.pawns[0].step = 51;
+  player.pawns[0].inHomeCorridor = false;
+  assert(canPawnMove(player, player.pawns[0], 6, quickRules), 'Pawn on outer track step 51 can legally move with roll 6 (wraps to step 5)');
+  const outcomeFrom51Roll6 = calculateMoveOutcome([player], player, 0, 6, quickRules);
+  assert(outcomeFrom51Roll6.toStep === 5, 'Pawn on outer track step 51 with roll 6 wraps to step 5 on outer track (does not overshoot)');
+  const outcomeFrom51Roll5 = calculateMoveOutcome([player], player, 0, 5, quickRules);
+  assert(outcomeFrom51Roll5.toStep === 4, 'Pawn on outer track step 51 with roll 5 wraps to step 4 (does not teleport to home 56)');
+  assert(outcomeFrom51Roll5.reachedHome === false, 'Pawn on outer track step 51 with roll 5 does not reach home');
+
   // getStepPath verification for perimeter wrapping
   const wrapPath = getStepPath('RED', 50, 1, 0, false, true);
   assert(wrapPath.length === 3, 'Wrap path from 50 to 1 contains 3 hops (51, 0, 1)');

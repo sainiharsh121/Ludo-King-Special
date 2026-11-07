@@ -154,7 +154,7 @@ export const PassNPlaySetupScreen: React.FC<PassNPlaySetupScreenProps> = ({
         <div className="absolute inset-0 bg-gradient-to-b from-[#02183d]/92 via-[#03235b]/85 to-[#021535]/95 pointer-events-none" />
 
         {/* 2. Top Audio Toggle Button (Repositioned lower; avatar & currency removed per request) */}
-        <div className="relative z-20 w-full pt-3 px-3 flex items-center justify-end pointer-events-auto">
+        <div className="relative z-20 w-full pt-5 sm:pt-6 px-4 flex items-center justify-end pointer-events-auto">
           <button
             type="button"
             onClick={() => {

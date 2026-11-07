@@ -64,7 +64,15 @@ export function canPawnMove(
   // Case 2: Pawn is on track or in home corridor
   // Rule: In Quick Mode (mustCaptureToEnterHome = true), token CANNOT enter home corridor without a capture.
   // Instead, it continues circling the main outer track indefinitely (all rolls 1..6 are valid).
-  if (rules.mustCaptureToEnterHome && !player.hasCaptured) {
+  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !player.hasCaptured);
+  if (isHomeLocked) {
+    return true;
+  }
+
+  // If token is on the outer track at step 51 (having circled past entrance):
+  // It cannot enter the corridor from step 51; it must wrap to step 0 and circle around.
+  // So all rolls 1..6 wrap to (51 + roll) % 52 and are legal!
+  if (pawn.inHomeCorridor === false && pawn.step === 51) {
     return true;
   }
 
@@ -99,7 +107,9 @@ export function calculateMoveOutcome(
 ): MoveOutcome {
   const pawn = activePlayer.pawns[pawnId];
   const fromStep = pawn.step;
-  const mustCircleTrack = Boolean(rules.mustCaptureToEnterHome && !activePlayer.hasCaptured);
+  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !activePlayer.hasCaptured);
+  const isPastEntranceOnTrack = Boolean(pawn.inHomeCorridor === false && fromStep === 51);
+  const mustCircleTrack = isHomeLocked || isPastEntranceOnTrack;
 
   const toStep = fromStep === -1 ? 0 : (mustCircleTrack ? (fromStep + roll) % 52 : fromStep + roll);
   const reachedHome = !mustCircleTrack && toStep === 56;
@@ -114,7 +124,8 @@ export function calculateMoveOutcome(
   let jumpCapturedPawn: MoveOutcome['capturedPawn'] = null;
 
   // Check captures if landing on global track
-  const isOnTrack = !reachedHome && toStep >= 0 && (mustCircleTrack ? toStep <= 51 : toStep <= 50);
+  const willEnterCorridor = !mustCircleTrack && toStep >= 51 && toStep <= 56;
+  const isOnTrack = !reachedHome && toStep >= 0 && (toStep <= 50 || (!willEnterCorridor && toStep === 51));
   if (isOnTrack) {
     const landingGlobalIdx = stepToGlobalIndex(activePlayer.color, toStep)!;
     
@@ -198,7 +209,8 @@ export function calculateMoveOutcome(
       jumpToStep = targetJump;
 
       // Check secondary landing effects after jump
-      const isJumpOnTrack = jumpToStep >= 0 && (mustCircleTrack ? jumpToStep <= 51 : jumpToStep <= 50);
+      const isJumpEnteringCorridor = !mustCircleTrack && jumpToStep >= 51 && jumpToStep <= 56;
+      const isJumpOnTrack = jumpToStep >= 0 && (jumpToStep <= 50 || (!isJumpEnteringCorridor && jumpToStep === 51));
       if (isJumpOnTrack) {
         const jumpLandingGlobalIdx = stepToGlobalIndex(activePlayer.color, jumpToStep)!;
         const jumpOnFreeze = Boolean(freezeStarIndices && freezeStarIndices.includes(jumpLandingGlobalIdx));
