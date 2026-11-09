@@ -71,6 +71,7 @@ export const PlayerHUD: React.FC<PlayerHUDProps> = ({
               color={player.color}
               customHex={activeColorHex}
               className="w-6 h-7 sm:w-7 sm:h-8 transition-transform hover:scale-110"
+              spinRing={isActiveTurn && player.rank === null}
             />
 
             {/* Rank Trophy Badge if Finished */}

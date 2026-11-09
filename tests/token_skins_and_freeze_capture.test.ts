@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { calculateMoveOutcome } from '../src/utils/gameRulesEngine';
 import { GameRules, Player, Pawn, TokenId } from '../src/types/ludo';
-import { NINE_TOKEN_COLORS } from '../src/components/TokenPreviewSVG';
+import { NINE_TOKEN_COLORS, normalizeTokenHex } from '../src/components/TokenPreviewSVG';
 
 const defaultRules: GameRules = {
   openOnSixOnly: true,
@@ -86,23 +86,32 @@ assert(colorNames.includes('Pink'));
 assert(colorNames.includes('Yellow'));
 assert(colorNames.includes('Green'));
 assert(colorNames.includes('Purple'));
-assert(colorNames.includes('Black'));
+assert(colorNames.includes('Cyan'));
+assert(!colorNames.includes('Black'));
 const redOption = NINE_TOKEN_COLORS.find(c => c.name === 'Red');
 assert.strictEqual(redOption?.hex, '#ff0000');
 const yellowOption = NINE_TOKEN_COLORS.find(c => c.name === 'Yellow');
 assert.strictEqual(yellowOption?.hex, '#ffff00');
 const greenOption = NINE_TOKEN_COLORS.find(c => c.name === 'Green');
-assert.strictEqual(greenOption?.hex, '#008000');
+assert.strictEqual(greenOption?.hex, '#78f62f');
+const silverOption = NINE_TOKEN_COLORS.find(c => c.name === 'Silver');
+assert.strictEqual(silverOption?.hex, '#c0c0c0');
 const goldOption = NINE_TOKEN_COLORS.find(c => c.name === 'Gold');
 assert.strictEqual(goldOption?.hex, '#ffd700');
 const pinkOption = NINE_TOKEN_COLORS.find(c => c.name === 'Pink');
 assert.strictEqual(pinkOption?.hex, '#ff69b4');
-const blackOption = NINE_TOKEN_COLORS.find(c => c.name === 'Black');
-assert.strictEqual(blackOption?.hex, '#3b3c36');
-console.log('✅ PASS: Red updated to #ff0000, Yellow to #ffff00, Green to #008000');
+const cyanOption = NINE_TOKEN_COLORS.find(c => c.name === 'Cyan');
+assert.strictEqual(cyanOption?.hex, '#00ffff');
+// Colors saved by older versions are translated to the colors that replaced them
+assert.strictEqual(normalizeTokenHex('#777777ff'), '#c0c0c0');
+assert.strictEqual(normalizeTokenHex('#E4E4E4'), '#c0c0c0');
+assert.strictEqual(normalizeTokenHex('#008000'), '#78f62f');
+assert.strictEqual(normalizeTokenHex('#3b3c36'), '#00ffff');
+assert.strictEqual(normalizeTokenHex('#FF69B4'), '#ff69b4');
+console.log('✅ PASS: Red updated to #ff0000, Yellow to #ffff00, Green to #78f62f, Silver to #c0c0c0');
 console.log('✅ PASS: Gold color updated to #ffd700 | rgb(255,215,0)');
 console.log('✅ PASS: Pink color updated to #ff69b4 | rgb(255,105,180)');
-console.log('✅ PASS: Black color updated to #3b3c36 | rgb(59,60,54)');
+console.log('✅ PASS: Black replaced by Cyan #00ffff | rgb(0,255,255); legacy colors map to the new palette');
 console.log('✅ PASS: 9 distinct color names present');
 
 // 5. Random color shuffling ensures distinct colors for all players

@@ -80,7 +80,7 @@ All 6 test suites run and pass cleanly via `npm test`:
 ### 3.5. 60 FPS Mobile Performance Engine
 - **Hardware Acceleration:** All moving board elements (tokens jumping between tiles, dice shaking, victory celebration rockets) use CSS 3D transforms (`transform: translate3d(x, y, 0)`).
 - **Reduced Paint Cycles:** Board grid lines, yard bases, and safe stars are rendered as vector SVG geometries styled with CSS variables, avoiding costly browser repaints.
-- **Smooth Dice Physics:** Slower 1350ms rolling duration with keyframe deceleration, cycling faces at 110ms intervals without dropping frames.
+- **Smooth Dice Physics (superseded in v1.2.x by a fast ~260-285 ms roll):** Slower 1350ms rolling duration with keyframe deceleration, cycling faces at 110ms intervals without dropping frames.
 
 ---
 

@@ -1,12 +1,12 @@
 # Ludo King: Version 1.2 — Milestone Architecture & Status Report
 
 > **Document Location:** `session-compact/version1.2.md`  
-> **Release Version:** 1.2 (Latest Tag `v1.2.2`)  
+> **Release Version:** 1.2.x (latest git tag `v1.2.7`; `package.json` still reads `1.2.5` - bump it on the next release)  
 > **Git Repository:** `https://github.com/sainiharsh121/Ludo-King-Special.git`  
-> **Date:** November 2026  
+> **Date:** November 2026 (last updated 2026-11-09)  
 > **Workspace:** `E:\ludo_new`  
 > **Target Platform:** Mobile-First Web Application (Android Chrome / iOS Safari / Responsive Desktop) & Native Android APK (Capacitor)  
-> **Status:** Production-Ready / 100% Automated Test Suites Passing (119/119) / Zero Build Errors / 60 FPS Mobile Performance
+> **Status:** Production-Ready / 100% Automated Test Suites Passing (2,521 assertions via `npm test`) / Zero Build Errors / 60 FPS Mobile Performance
 
 ---
 
@@ -66,7 +66,44 @@ Version 1.2 delivers major gameplay dynamics, visual refinements, competitive fa
 All test suites pass with 100% success rate:
 - ✅ **Base Yard Exit & Track Mechanics:** Safe stars, base unlocks, capture rules, home entry guards.
 - ✅ **Hazard System:** 4 Freeze Stars, 4 Jump Icons, 2–3 min relocation, frozen capture vulnerability.
-- ✅ **Dice Engine:** Max 2 sixes cap, home overshoot turn passing, 1350ms rolling physics.
+- ✅ **Dice Engine:** Max 2 sixes cap, home overshoot turn passing, fast dice roll (~260-285 ms, see classic_mode_rules.md).
 - ✅ **Team Up Engine:** Partner roll transfer, 8-token team win condition, friendly kill toggle.
 - ✅ **Visual & Accessibility:** 9-color palette, zero raw hex outside `:root`, WCAG AAA/AA contrast.
 
+
+---
+
+## 4. Version 1.2.5 - 1.2.7 (2026-11-06)
+
+- **v1.2.5:** Classic Mode no longer needs a capture before entering the home column (`mustCaptureToEnterHome = false`); the capture-first rule is Quick Mode only.
+- **v1.2.6:** Pin token inner colour circle enlarged; yard socket circles reduced so tokens sit on a ring pedestal.
+- **v1.2.7:** Palette update (pure Red `#ff0000`, Yellow `#ffff00`, Green `#008000`), token/cell alignment fixes, Android launcher icons for every mipmap density.
+
+## 5. Post-1.2.7 Changes (2026-11-06 to 2026-11-07)
+
+- **Token animation speed** iterated 80 -> 120 -> 180 -> **210 ms per cell** (final). `pawnSpeedMs: 210` is set in `App.tsx`, `SetupModal`, `PassNPlayClassicSetupScreen`, `PassNPlayTeamUpSetupScreen`. *(Note: `src/engine/config.ts` - unused by the UI - still says 180 ms.)*
+- **Dice:** borderless 3D dice, curved corners, HUD dice slot shading matched; settle delay removed (dice result is committed ~260 ms after the tap).
+- **Dynamic six-boost:** fresh rolls get +5% / +12% / +18% extra six probability (see `classic_mode_rules.md` section 3.1).
+- **Dual-direction Jump Icons:** the first two jump icons can push a token **backward** 1-5 cells (50%).
+- **Yard fix:** a yard token unlocks directly onto its start square (no bounce); finished players are skipped in Classic turn order.
+- **UI cleanup:** turn dots replaced by a glassmorphic mode badge; pulsing amber dot and redundant header badge removed; clean mode-selection top bar.
+- **Quick Mode:** home column locked until first capture, with a lock/unlock animation; tokens circle the outer track meanwhile; **step-51 wrap-around** and corridor-vs-track distinction fixed; volume button repositioned.
+
+## 6. 2026-11-09 Update
+
+- **Bug fix - three consecutive sixes could appear.** When only one token was movable, the auto-move used a stale `players` snapshot and reverted `consecutiveSixes`, defeating the "max 2 sixes" guard. `animateAndApplyMove` now receives the fresh count and re-applies it before saving state. New regression test `tests/three_sixes_rule.test.ts` (added to `npm test`).
+- **Larger tokens (all 5 skins: pin, disc, hammer, top, ninja):**
+  - Track: `24x28 -> 27x31 px` (>= `sm`: `28x32 -> 31x36 px`)
+  - Yard: `23x26 -> 26x30 px` (>= `sm`: `26x30 -> 29x34 px`)
+  - Applies to static tokens and the animating (hopping/rewinding) token in `LudoBoard.tsx`.
+- **Bug fix - Jump Icon at the home-column entrance.** In Quick Mode (column locked), a token landing on a Jump Icon beside its home column was wrapped `(step + jump) % 52` back around the track. A forward jump that crosses the entrance now carries the token into the column (or home). Tokens already inside the column are exempt from the lock. New test `tests/jump_into_home_column.test.ts`.
+- **Pin token ring animation:** the brown pedestal ring under the Pin token now has small gaps (8 segments) and rotates while it is the owner's turn (every token of the active player, plus the active player's HUD pin). Test: `tests/pin_ring_spin.test.ts`.
+- **Palette update:** Green is now `#78f62f`, Silver `#c0c0c0`, and the Black option became **Cyan `#00ffff`** (`NINE_TOKEN_COLORS`). `normalizeTokenHex()` translates colours saved by older versions (`#777777ff`, `#e4e4e4`, `#008000`, `#3b3c36`) so existing saved selections keep working. Board default `--seat-green` stays `#008000`. Team Up default P3 colour is now `#78f62f`.
+- **Fresh game on every app launch.** The app no longer resumes an unfinished match or last screen after a restart: `resetSessionOnLaunch()` clears the stored active match, screen and URL hash at startup (manual saved games, splash-seen flag and preferences are kept). Test: `tests/fresh_start_on_launch.test.ts`.
+- **Token sizes are shared by all modes** (Classic, Team Up, Quick use the same `LudoBoard`).
+- **Docs:** new `classic_mode_rules.md` (rules as implemented, previously unwritten); the old `classic-rules.md` was removed in favour of it; stale values corrected in `teamup-rules.md`, `08-...md`, `version1.1.md`, `01-setup.md`.
+
+## 7. Known Architecture Notes
+
+- The playable game runs on `src/utils/gameRulesEngine.ts` + `src/App.tsx`. `src/engine/` (seeded 0..57 event engine from `README.md`) and its tests (`engine_acceptance`, `simulate_10000`) are **not used by the UI**.
+- Randomness in the live game (`Math.random`, unseeded PRNG) is not replayable.

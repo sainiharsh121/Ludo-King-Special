@@ -12,7 +12,9 @@ assert.strictEqual(getCanonicalFamily('#b21919'), 'RED');
 assert.strictEqual(getCanonicalFamily('var(--seat-red)'), 'RED');
 assert.strictEqual(getCanonicalFamily('#ecae02'), 'YELLOW');
 assert.strictEqual(getCanonicalFamily('var(--accent-yellow)'), 'YELLOW');
-assert.strictEqual(getCanonicalFamily('#777777ff'), null); // Silver is custom
+assert.strictEqual(getCanonicalFamily('#c0c0c0'), null); // Silver is custom
+assert.strictEqual(getCanonicalFamily('#78f62f'), 'GREEN'); // palette Green
+assert.strictEqual(getCanonicalFamily('#00ffff'), null); // Cyan is custom
 console.log('✅ PASS: getCanonicalFamily correctly maps tokens to canonical color families');
 
 // 2. Simulate 2-player game where Player 1 chose Green and Player 2 chose Blue

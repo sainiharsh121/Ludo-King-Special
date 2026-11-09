@@ -5,6 +5,7 @@ import {
   TokenPreviewSVG,
   LUDO_TOKEN_PALETTE,
   NINE_TOKEN_COLORS,
+  normalizeTokenHex,
   TokenColorOption,
 } from './TokenPreviewSVG';
 import {
@@ -40,7 +41,7 @@ const STORAGE_KEY_FRIENDLY_KILL = 'ludo_pnp_teamup_friendly_kill';
 // Team B: Red (P2) & Yellow (P4)
 export const DEFAULT_TEAMUP_COLORS: Record<TeamUpPlayerKey, string> = {
   p1: '#3a72db', // Royal Blue
-  p3: '#7dc929', // Lime Green
+  p3: '#78f62f', // Green
   p2: '#b21919', // Crimson Red
   p4: '#e6cc46', // Lemon Yellow
 };
@@ -75,7 +76,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
         const parsed = JSON.parse(saved);
         if (parsed.p1 && parsed.p3 && parsed.p2 && parsed.p4) {
           (['p1', 'p3', 'p2', 'p4'] as TeamUpPlayerKey[]).forEach(k => {
-            if (parsed[k]?.toLowerCase() === '#e4e4e4') parsed[k] = '#777777ff';
+            if (typeof parsed[k] === 'string') parsed[k] = normalizeTokenHex(parsed[k]);
           });
           const values = [parsed.p1, parsed.p3, parsed.p2, parsed.p4];
           if (new Set(values.map((v: string) => v.toLowerCase())).size === 4) {
@@ -151,11 +152,7 @@ export const PassNPlayTeamUpSetupScreen: React.FC<PassNPlayTeamUpSetupScreenProp
       playerKey === 'p1' ? 'Player 1' : playerKey === 'p3' ? 'Player 3' : playerKey === 'p2' ? 'Player 2' : 'Player 4';
     const name = playerNames[playerKey] || defaultName;
     const currentColor = playerColors[playerKey];
-    const colorOption = NINE_TOKEN_COLORS.find(
-      c =>
-        c.hex.toLowerCase() === currentColor.toLowerCase() ||
-        (currentColor.toLowerCase() === '#777777' && c.hex.toLowerCase() === '#777777ff')
-    );
+    const colorOption = NINE_TOKEN_COLORS.find(c => c.hex.toLowerCase() === normalizeTokenHex(currentColor));
     return {
       name,
       teamLabel: isTeamA ? 'Team A' : 'Team B',

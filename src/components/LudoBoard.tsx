@@ -249,7 +249,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               tokenType={config.player?.tokenId || selectedTokenId || 'pin'}
               color={color}
               customHex={config.player?.tokenColorHex || config.seatColor}
-              className="w-[23px] h-[26px] sm:w-[26px] sm:h-[30px]"
+              className="w-[26px] h-[30px] sm:w-[29px] sm:h-[34px]"
+              spinRing={config.player?.id === (movablePlayerId ?? activePlayer.id) && phase !== 'GAME_OVER'}
             />
           </div>
         )}
@@ -923,7 +924,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                         tokenType={item.player.tokenId || selectedTokenId || 'pin'}
                         color={item.player.color}
                         customHex={colorHex}
-                        className="w-[24px] h-[28px] sm:w-[28px] sm:h-[32px]"
+                        className="w-[27px] h-[31px] sm:w-[31px] sm:h-[36px]"
+                        spinRing={item.player.id === (movablePlayerId ?? activePlayer.id) && phase !== 'GAME_OVER'}
                       />
                     </div>
                   </div>
@@ -958,7 +960,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
                     color={animatingPawn.color}
                     customHex={animPlayer?.tokenColorHex || animHex}
-                    className="w-[24px] h-[28px] sm:w-[28px] sm:h-[32px]"
+                    className="w-[27px] h-[31px] sm:w-[31px] sm:h-[36px]"
+                    spinRing={phase !== 'GAME_OVER'}
                   />
                 </div>
               </div>

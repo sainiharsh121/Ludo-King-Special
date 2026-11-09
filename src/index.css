@@ -236,6 +236,22 @@
   }
 }
 
+/* Pin token: pedestal ring rotates while it is the owner's turn (duration/delay set inline per token) */
+@keyframes pinRingSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.pin-ring-spin {
+  animation-name: pinRingSpin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pin-ring-spin { animation: none; }
+}
+
 .pawn-movable {
   animation: pawnPulse 0.8s ease-in-out infinite;
   cursor: pointer;

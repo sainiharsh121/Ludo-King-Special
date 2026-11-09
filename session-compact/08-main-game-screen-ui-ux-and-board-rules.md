@@ -4,7 +4,8 @@
 > **Session Phase:** Main Game Arena UI/UX Redesign & Board Rules Engine (Custom Player Colors & Slower Dice Scrolling)  
 > **Target Platform:** Mobile-First Web Application (Android Chrome / iOS Safari / Responsive Desktop)  
 > **Workspace:** `E:\ludo_new`  
-> **Status:** Production-Ready / 100% Automated Tests Passing (119/119) / Zero Build Errors / Dev Server Live
+> **Status:** Historical snapshot (119/119 tests at the time). Current suite: 2,521 assertions passing via `npm test` (2026-11-09).  
+> **Update notes:** rolling duration is now fast (~260-285 ms, not 1350 ms); bottom page dots were removed; Lavender was replaced by Pink; tokens enlarged to track `27x31 px` / yard `26x30 px`; token hop is 210 ms. Current rules: `classic_mode_rules.md`.
 
 ---
 
@@ -96,7 +97,7 @@ Per the user's specification and provided visual reference:
 
 ### 3.5 Authentic Audio & Visual Enhancements
 - **Acoustic Matching to Gameplay Recording:** Dice tumbling and token hopping audio procedural synthesizers updated to match real game clatter, high-gain punch, and loud bounce feedback.
-- **Enlarged Token Sizing:** Token dimensions scaled (`22px × 28px` to `25px × 32px`) across yard sockets, track paths, and HUD badges to eliminate eye strain.
+- **Enlarged Token Sizing:** Token dimensions scaled several times; current sizes are track `27x31 px` (>= sm `31x36 px`) and yard `26x30 px` (>= sm `29x34 px`) for all 5 skins.
 - **Celebration Rematch Reset:** Confetti animation from `GameOverModal` is cleanly stopped and disposed upon rematch.
 
 

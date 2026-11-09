@@ -94,6 +94,26 @@ export const getSavedActiveMatch = (): ActiveMatchState | null => {
 };
 
 /**
+ * Fresh start on every app launch: whenever the app (or page) is started anew - e.g. the phone app is closed and
+ * reopened - any unfinished match and the remembered screen are discarded so the game begins from scratch.
+ * Intentionally kept: manually saved games (`ludo_saved_games`), the "splash seen" flag and player preferences.
+ * Backgrounding/resuming the app does not reload the page, so a running match is NOT affected by that.
+ */
+export const resetSessionOnLaunch = (): void => {
+  try {
+    localStorage.removeItem(ACTIVE_MATCH_STORAGE_KEY);
+    localStorage.removeItem(ACTIVE_SCREEN_STORAGE_KEY);
+  } catch {}
+  try {
+    // Drop a stale "#game" / "#pass-classic" hash so it cannot force a screen on launch
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  } catch {}
+};
+resetSessionOnLaunch();
+
+/**
  * In TEAM_UP (2v2) mode, if the active player has already completed all tokens into home,
  * their dice roll is awarded to their teammate to move the teammate's tokens!
  */
@@ -567,7 +587,11 @@ export const App: React.FC = () => {
   }, [currentScreen, phase, activePlayer, isRolling, legalPawnIds, diceValue, rules, freezeStarIndices, jumpIconIndices, gameMode, players]);
 
   // Execute Step-by-Step Parabolic Hopping Animation
-  const animateAndApplyMove = async (pawnId: number, roll: number) => {
+  // `sixesInRowAfterRoll` is the active player's consecutive-six count INCLUDING the roll being played.
+  // The auto-move path runs from a setTimeout closure that still holds the pre-roll `players` snapshot,
+  // so it must pass the fresh count explicitly; otherwise the stale snapshot below would overwrite it
+  // (reverting the counter) and allow a forbidden third consecutive six.
+  const animateAndApplyMove = async (pawnId: number, roll: number, sixesInRowAfterRoll?: number) => {
     setPhase('ANIMATING_MOVE');
     setLegalPawnIds([]);
     setFriendlyKillPawnIds([]);
@@ -586,7 +610,8 @@ export const App: React.FC = () => {
 
     const movingPawn = controllingPlayer.pawns.find(p => p.id === pawnId);
     const isPastEntranceOnTrack = Boolean(movingPawn?.inHomeCorridor === false && outcome.fromStep === 51);
-    const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !controllingPlayer.hasCaptured);
+    // A pawn already inside its home corridor (e.g. carried in by a Jump Icon) is no longer subject to the Quick Mode lock
+    const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !controllingPlayer.hasCaptured && movingPawn?.inHomeCorridor !== true);
     const isWrapping = Boolean(
       isHomeLocked ||
       isPastEntranceOnTrack ||
@@ -656,7 +681,9 @@ export const App: React.FC = () => {
       }
       await new Promise(res => setTimeout(res, 160));
 
+      const jumpEnteredCorridor = Boolean(outcome.jumpEnteredCorridor);
       const isJumpWrapping = Boolean(
+        !jumpEnteredCorridor &&
         (isHomeLocked || isPastEntranceOnTrack) &&
         outcome.jumpToStep !== undefined &&
         outcome.jumpToStep < outcome.toStep &&
@@ -664,8 +691,7 @@ export const App: React.FC = () => {
         outcome.jumpSteps > 0
       );
       const isJumpEnteringCorridor = Boolean(
-        !isHomeLocked &&
-        !isPastEntranceOnTrack &&
+        (jumpEnteredCorridor || (!isHomeLocked && !isPastEntranceOnTrack)) &&
         outcome.jumpToStep !== undefined &&
         outcome.jumpToStep >= 51 &&
         outcome.jumpToStep <= 56
@@ -714,7 +740,7 @@ export const App: React.FC = () => {
         const updatedPawns = p.pawns.map(item => {
           if (item.id === pawnId) {
             const isCorridor = Boolean(
-              (willEnterCorridor || (outcome.jumpToStep !== undefined && !isHomeLocked && !isPastEntranceOnTrack && outcome.jumpToStep >= 51)) &&
+              (willEnterCorridor || (outcome.jumpToStep !== undefined && (outcome.jumpEnteredCorridor || (!isHomeLocked && !isPastEntranceOnTrack)) && outcome.jumpToStep >= 51)) &&
               finalToStep >= 51 &&
               finalToStep <= 55
             );
@@ -748,9 +774,15 @@ export const App: React.FC = () => {
       return p;
     });
 
+    // Preserve the active player's consecutive-six counter (never let a stale snapshot roll it back)
+    const preservedSixes = sixesInRowAfterRoll ?? activePlayer.consecutiveSixes;
+    updatedPlayers = updatedPlayers.map(p =>
+      p.id === activePlayer.id ? { ...p, consecutiveSixes: preservedSixes } : p
+    );
+
     setPlayers(updatedPlayers);
 
-    const movingPlayerState = updatedPlayers.find(p => p.id === controllingPlayer.id);
+    const movingPlayerState =updatedPlayers.find(p => p.id === controllingPlayer.id);
     const isMovingPlayerFinished = gameMode !== 'TEAM_UP' && !!movingPlayerState && isPlayerFinished(movingPlayerState, gameMode);
 
     // Play specific landing triggers for attacker
@@ -1063,7 +1095,7 @@ export const App: React.FC = () => {
             : `Auto-moving pawn #${legalPawns[0].id + 1}`
         );
         setTimeout(() => {
-          animateAndApplyMove(legalPawns[0].id, roll);
+          animateAndApplyMove(legalPawns[0].id, roll, currentSixes);
         }, 180);
       } else {
         // Multiple pawns can move, let the player select

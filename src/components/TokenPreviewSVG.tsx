@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { PlayerColor, TokenId } from '../types/ludo';
 
 /**
  * Authentic 9-Color Palette specified by user for Ludo Tokens:
  * 1. #ffd700 (Gold | rgb(255,215,0))
- * 2. #777777ff (Silver)
+ * 2. #c0c0c0 (Silver)
  * 3. #b21919 (Crimson Red)
  * 4. #3a72db (Royal Blue)
  * 5. #ff69b4 (Pink / Hot Pink)
  * 6. #e6cc46 (Bright Gold / Lemon Yellow)
- * 7. #45901A (Green)
+ * 7. #78f62f (Green)   <- palette Green (board default --seat-green stays #008000)
  * 8. #af27d7 (Vivid Purple)
- * 9. #3b3c36 (Black / Charcoal)
+ * 9. #00ffff (Cyan - replaced the former Black #3b3c36)
  */
 export const LUDO_TOKEN_PALETTE = {
   YELLOW: 'var(--accent-gold)',
@@ -52,12 +52,12 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
   {
     id: 'platinum-silver',
     name: 'Silver',
-    hex: '#777777ff',
-    accent: '#aaaaaa',
-    glow: 'shadow-[0_0_12px_rgba(119,119,119,0.65)]',
-    bgGrad: 'from-[#777777]/35 via-[#777777]/15 to-[#3b3c36]/60',
-    borderColor: 'border-[#777777]',
-    textColor: 'text-[#777777]',
+    hex: '#c0c0c0',
+    accent: '#e0e0e0',
+    glow: 'shadow-[0_0_12px_rgba(192,192,192,0.65)]',
+    bgGrad: 'from-[#c0c0c0]/35 via-[#c0c0c0]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#c0c0c0]',
+    textColor: 'text-[#c0c0c0]',
   },
   {
     id: 'crimson-red',
@@ -102,12 +102,12 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
   {
     id: 'lime-green',
     name: 'Green',
-    hex: '#008000',
-    accent: '#00b300',
-    glow: 'shadow-[0_0_12px_rgba(0,128,0,0.65)]',
-    bgGrad: 'from-[#008000]/35 via-[#008000]/15 to-[#3b3c36]/60',
-    borderColor: 'border-[#008000]',
-    textColor: 'text-[#008000]',
+    hex: '#78f62f',
+    accent: '#a3ff6b',
+    glow: 'shadow-[0_0_12px_rgba(120,246,47,0.65)]',
+    bgGrad: 'from-[#78f62f]/35 via-[#78f62f]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#78f62f]',
+    textColor: 'text-[#78f62f]',
   },
   {
     id: 'vivid-purple',
@@ -120,16 +120,34 @@ export const NINE_TOKEN_COLORS: TokenColorOption[] = [
     textColor: 'text-[#af27d7]',
   },
   {
-    id: 'charcoal-dark',
-    name: 'Black',
-    hex: '#3b3c36',
-    accent: '#66685f',
-    glow: 'shadow-[0_0_12px_rgba(59,60,54,0.7)]',
-    bgGrad: 'from-[#3b3c36]/60 via-[#3b3c36]/35 to-slate-950/80',
-    borderColor: 'border-[#3b3c36]',
-    textColor: 'text-slate-200',
+    id: 'cyan',
+    name: 'Cyan',
+    hex: '#00ffff',
+    accent: '#80ffff',
+    glow: 'shadow-[0_0_12px_rgba(0,255,255,0.65)]',
+    bgGrad: 'from-[#00ffff]/35 via-[#00ffff]/15 to-[#3b3c36]/60',
+    borderColor: 'border-[#00ffff]',
+    textColor: 'text-[#00ffff]',
   },
 ];
+
+/**
+ * Colors that were part of earlier palettes. Colors saved on a device (setup screens, saved games) may still hold
+ * these values, so they are translated to the current palette entry that replaced them.
+ */
+const LEGACY_TOKEN_HEX_ALIASES: Record<string, string> = {
+  '#e4e4e4': '#c0c0c0', // original silver track colour
+  '#777777': '#c0c0c0', // previous Silver
+  '#777777ff': '#c0c0c0',
+  '#008000': '#78f62f', // previous Green
+  '#3b3c36': '#00ffff', // previous Black -> Cyan
+};
+
+/** Map a possibly-legacy hex to the current palette value (lower-cased); unknown values are returned lower-cased. */
+export const normalizeTokenHex = (hex: string): string => {
+  const h = (hex || '').toLowerCase();
+  return LEGACY_TOKEN_HEX_ALIASES[h] ?? h;
+};
 
 /**
  * Detect if a token color hex/variable/name belongs to one of the 4 canonical Ludo colors (RED, GREEN, YELLOW, BLUE).
@@ -218,11 +236,16 @@ export const COLOR_CONFIG_PALETTE: Record<PlayerColor, {
   },
 };
 
+/** Duration (ms) of one full turn of the pin token's pedestal ring while it is the owner's turn. */
+export const PIN_RING_SPIN_MS = 2400;
+
 interface TokenPreviewSVGProps {
   color?: PlayerColor;
   customHex?: string;
   tokenType?: TokenId;
   className?: string;
+  /** Pin token only: rotate the pedestal ring under the pin (used while it is this token owner's turn). */
+  spinRing?: boolean;
 }
 
 export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
@@ -230,18 +253,17 @@ export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
   customHex,
   tokenType = 'pin',
   className = 'w-7 h-7',
+  spinRing = false,
 }) => {
+  // Start the spin at the shared global phase so every ring turns in sync and a re-mounted token
+  // (e.g. the hopping clone) continues smoothly instead of restarting from 0 degrees.
+  const spinDelayRef = useRef<number>(-(Date.now() % PIN_RING_SPIN_MS));
   const p = COLOR_CONFIG_PALETTE[color];
   const P = LUDO_TOKEN_PALETTE;
 
   const activeFill = customHex || p.fill;
   const matchedOption = customHex
-    ? NINE_TOKEN_COLORS.find(
-        c =>
-          c.hex.toLowerCase() === customHex.toLowerCase() ||
-          (customHex.toLowerCase() === '#777777' && c.hex.toLowerCase() === '#777777ff') ||
-          (customHex.toLowerCase() === '#e4e4e4' && c.id === 'platinum-silver')
-      )
+    ? NINE_TOKEN_COLORS.find(c => c.hex.toLowerCase() === normalizeTokenHex(customHex))
     : null;
   const activeAccent = matchedOption ? matchedOption.accent : p.accent;
 
@@ -404,23 +426,50 @@ export const TokenPreviewSVG: React.FC<TokenPreviewSVGProps> = ({
     default:
       return (
         <svg viewBox="0 0 28 32" className={`${className} filter drop-shadow`}>
-          {/* Base circular pedestal ring in rich brown with inner transparency */}
-          <path
-            d="M 14 10.8 A 9.2 9.2 0 1 0 14 29.2 A 9.2 9.2 0 1 0 14 10.8 Z M 14 13.6 A 6.4 6.4 0 1 1 14 26.4 A 6.4 6.4 0 1 1 14 13.6 Z"
-            fill={P.RING_BROWN}
-            stroke={P.CHARCOAL}
-            strokeWidth="1.2"
-            fillRule="evenodd"
-          />
-          {/* 3D specular highlight arc on the brown pedestal ring */}
-          <path
-            d="M 7.2 22.5 A 7.8 7.8 0 0 0 20.8 22.5"
-            fill="none"
-            stroke={P.RING_BROWN_LIGHT}
-            strokeWidth="1"
-            strokeLinecap="round"
-            opacity="0.8"
-          />
+          {/* Pedestal ring: 8 brown segments separated by small gaps (so the rotation is visible).
+              The whole group turns around the ring centre (14, 20) while it is the owner's turn. */}
+          <g
+            className={spinRing ? 'pin-ring-spin' : undefined}
+            style={
+              spinRing
+                ? { transformOrigin: '14px 20px', animationDuration: `${PIN_RING_SPIN_MS}ms`, animationDelay: `${spinDelayRef.current}ms` }
+                : undefined
+            }
+          >
+            {/* Charcoal outline (slightly longer/wider dashes so the brown segments keep a dark border) */}
+            <circle
+              cx="14"
+              cy="20"
+              r="7.8"
+              fill="none"
+              stroke={P.CHARCOAL}
+              strokeWidth="4"
+              strokeDasharray="4.6 1.525"
+              strokeDashoffset="0.3"
+            />
+            {/* Brown ring segments */}
+            <circle
+              cx="14"
+              cy="20"
+              r="7.8"
+              fill="none"
+              stroke={P.RING_BROWN}
+              strokeWidth="2.8"
+              strokeDasharray="4 2.125"
+            />
+            {/* 3D highlight on the first part of each segment */}
+            <circle
+              cx="14"
+              cy="20"
+              r="7.8"
+              fill="none"
+              stroke={P.RING_BROWN_LIGHT}
+              strokeWidth="0.9"
+              strokeDasharray="2.4 3.725"
+              strokeDashoffset="-0.8"
+              opacity="0.85"
+            />
+          </g>
 
           {/* Upright Teardrop pin body in silver white with charcoal outline */}
           <path

@@ -16,14 +16,15 @@
 - **Custom Player Colors & Uniqueness Rules:**
   - Players pick 4 distinct colors from the 9-Color Master Palette:
     - **Gold:** `#ffd700` | `rgb(255, 215, 0)`
-    - **Silver:** `#777777`
-    - **Crimson Red:** `#b21919`
+    - **Silver:** `#c0c0c0`
+    - **Red:** `#ff0000`
     - **Royal Blue:** `#3a72db`
     - **Pink:** `#ff69b4` | `rgb(255, 105, 180)` (replaces Lavender)
-    - **Yellow:** `#e6cc46`
-    - **Lime Green:** `#7dc929`
+    - **Yellow:** `#ffff00`
+    - **Green:** `#78f62f`
     - **Purple:** `#af27d7`
-    - **Black:** `#3b3c36` | `rgb(59, 60, 54)`
+    - **Cyan:** `#00ffff` | `rgb(0, 255, 255)` (replaced Black `#3b3c36`)
+    - *(Colors saved on a device by older versions - Silver `#777777`/`#777777ff`/`#e4e4e4`, Green `#008000`, Black `#3b3c36` - are auto-translated by `normalizeTokenHex()` in `TokenPreviewSVG.tsx`.)*
   - **Clean Selection UI:** Color labels display clean color names only (no hex codes).
   - **Clickable White Token Boxes:** Each player's token is housed in a clean white container box with team color borders (`border-sky-400` for Team A, `border-rose-400` for Team B).
   - **Color Picker & Swapping:** Clicking a token box displays the 5 unselected colors in a modal, or allows instant clean color swapping with another player.
@@ -43,11 +44,11 @@
 
 ## 3. Dice Mechanics & Special Rolling Rules
 
-- **Standard Dice:** Rolls from `1` to `6` with 1350ms 3D tumble animation and realistic sound effects.
+- **Standard Dice:** Rolls from `1` to `6` with a fast 3D tumble (result committed ~260 ms after tap) and realistic sound effects; six probability is dynamically boosted on fresh rolls (see `classic_mode_rules.md` section 3.1).
 - **Anti-Chain Six Rule (Max 2 Consecutive Sixes):**
   - Rolling a `6` awards a bonus roll.
   - Rolling a second consecutive `6` awards a second bonus roll.
-  - If two consecutive sixes have been rolled, the **third roll is strictly capped between 1 and 5** (a 3rd consecutive 6 is impossible).
+  - If two consecutive sixes have been rolled, the **third roll is strictly capped between 1 and 5** (a 3rd consecutive 6 is impossible). *(Fixed 2026-11-09: the counter is no longer reverted by the single-token auto-move.)*
 - **Home Column Overshoot Rule:**
   - When a player's last active token is in the home column needing $N$ steps to reach home:
   - If a number greater than $N$ is rolled (e.g., needs `5`, rolled `6`), the move is rejected and the turn immediately passes to the next player without bonus rolls.
@@ -62,7 +63,7 @@
   - **Freeze Capture Vulnerability:** If an opponent token lands on a frozen pawn, **the frozen pawn is captured and sent back to yard**! Being frozen provides no defense against enemy captures.
 - **4 Jump Icons (⚡ / 🚀):**
   - 4 Jump Icons spawn at random non-safe track locations.
-  - A token landing on a Jump Icon gets an immediate forward boost of **1 to 5 random bonus steps**.
+  - A token landing on a Jump Icon gets an immediate hop of **1 to 5 random steps** (the first two icons may push **backward** with 50% chance); the icon is consumed and respawns after 2-3 minutes.
 - **Dynamic Relocation Cycle:**
   - Both Freeze Stars and Jump Icons automatically relocate to new random track squares every **2 to 3 minutes** (120,000ms – 180,000ms randomized interval).
 
@@ -104,3 +105,9 @@
 - **Match Outcome Enforcement:**
   - When a team loses the match, the selected penalty task is presented prominently on the Game Over screen, holding the losing team accountable to perform the punishment!
 
+---
+
+## 8. Implementation Notes (updated 2026-11-09)
+
+- Token hop speed is **210 ms** per cell; tokens were enlarged (track `27x31 px`, yard `26x30 px`).
+- Shared mechanics (hazard timing, bonus-roll priority, bots, persistence) are specified in `classic_mode_rules.md`. Team Up differs only in: no individual ranks, finished players keep rolling for their partner (`getControllingPlayer`), friendly-kill toggle, and team win only when all 8 tokens are home.

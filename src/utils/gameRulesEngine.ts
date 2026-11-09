@@ -19,6 +19,8 @@ export interface MoveOutcome {
   usedJumpIconIndex?: number | null;
   jumpSteps?: number;
   jumpToStep?: number;
+  /** True when a forward jump carried a circling (home-locked / past-entrance) token INTO its home column */
+  jumpEnteredCorridor?: boolean;
   jumpCapturedPawn?: {
     playerColor: PlayerColor;
     pawnId: number;
@@ -64,7 +66,8 @@ export function canPawnMove(
   // Case 2: Pawn is on track or in home corridor
   // Rule: In Quick Mode (mustCaptureToEnterHome = true), token CANNOT enter home corridor without a capture.
   // Instead, it continues circling the main outer track indefinitely (all rolls 1..6 are valid).
-  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !player.hasCaptured);
+  // A pawn already inside its home corridor (entered via a Jump Icon) is no longer subject to the lock.
+  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !player.hasCaptured && pawn.inHomeCorridor !== true);
   if (isHomeLocked) {
     return true;
   }
@@ -107,7 +110,7 @@ export function calculateMoveOutcome(
 ): MoveOutcome {
   const pawn = activePlayer.pawns[pawnId];
   const fromStep = pawn.step;
-  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !activePlayer.hasCaptured);
+  const isHomeLocked = Boolean(rules.mustCaptureToEnterHome && !activePlayer.hasCaptured && pawn.inHomeCorridor !== true);
   const isPastEntranceOnTrack = Boolean(pawn.inHomeCorridor === false && fromStep === 51);
   const mustCircleTrack = isHomeLocked || isPastEntranceOnTrack;
 
@@ -122,6 +125,7 @@ export function calculateMoveOutcome(
   let jumpSteps: number | undefined;
   let jumpToStep: number | undefined;
   let jumpCapturedPawn: MoveOutcome['capturedPawn'] = null;
+  let jumpEnteredCorridor = false;
 
   // Check captures if landing on global track
   const willEnterCorridor = !mustCircleTrack && toStep >= 51 && toStep <= 56;
@@ -199,7 +203,12 @@ export function calculateMoveOutcome(
       const isBackward = isDualDirection && (Math.random() < 0.5);
       jumpSteps = isBackward ? -k : k;
       let targetJump: number;
-      if (mustCircleTrack) {
+      if (mustCircleTrack && jumpSteps > 0 && toStep + jumpSteps >= 51) {
+        // Jump Icon next to the home column: a forward jump that is big enough to cross the entrance
+        // carries the token INTO its home column instead of sending it around the track for another lap.
+        targetJump = Math.min(56, toStep + jumpSteps);
+        jumpEnteredCorridor = true;
+      } else if (mustCircleTrack) {
         targetJump = (toStep + jumpSteps + 52) % 52;
       } else {
         targetJump = toStep + jumpSteps;
@@ -209,7 +218,7 @@ export function calculateMoveOutcome(
       jumpToStep = targetJump;
 
       // Check secondary landing effects after jump
-      const isJumpEnteringCorridor = !mustCircleTrack && jumpToStep >= 51 && jumpToStep <= 56;
+      const isJumpEnteringCorridor = (!mustCircleTrack || jumpEnteredCorridor) && jumpToStep >= 51 && jumpToStep <= 56;
       const isJumpOnTrack = jumpToStep >= 0 && (jumpToStep <= 50 || (!isJumpEnteringCorridor && jumpToStep === 51));
       if (isJumpOnTrack) {
         const jumpLandingGlobalIdx = stepToGlobalIndex(activePlayer.color, jumpToStep)!;
@@ -281,6 +290,7 @@ export function calculateMoveOutcome(
     jumpSteps,
     jumpToStep,
     jumpCapturedPawn,
+    jumpEnteredCorridor,
   };
 }
 

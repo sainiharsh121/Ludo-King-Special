@@ -159,7 +159,7 @@ export interface GameRules {
   bonusOnCapture: boolean;         // extra roll on capture
   bonusOnHomeReach: boolean;       // extra roll when pawn enters home
   safeZoneMode: SafeZoneMode;      // 'standard' (8) | 'exits_only' (4) | 'none'
-  pawnSpeedMs: number;             // 180ms (Normal) | 50ms (Turbo Blitz)
+  pawnSpeedMs: number;             // originally 180ms (Normal) | 50ms (Turbo Blitz); current default is 210ms
   autoMoveSingleLegal: boolean;    // auto-advance if single legal pawn
 }
 ```

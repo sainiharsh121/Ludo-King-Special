@@ -5,6 +5,7 @@ import { SavedGamesModal } from './SavedGamesModal';
 import {
   TokenPreviewSVG,
   NINE_TOKEN_COLORS,
+  normalizeTokenHex,
   LUDO_TOKEN_PALETTE,
   TokenColorOption
 } from './TokenPreviewSVG';
@@ -64,7 +65,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length >= 1 && parsed.length <= 4) {
-          return parsed.map((h: string) => h.toLowerCase() === '#e4e4e4' ? '#777777ff' : h) as string[];
+          return parsed.map((h: string) => normalizeTokenHex(h)) as string[];
         }
       }
     } catch { }
@@ -262,11 +263,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
       const isBot = idx >= (playerCount - botCount);
       const key = `p${idx + 1}`;
       const chosenHex = selectedHexes[idx] || NINE_TOKEN_COLORS[idx].hex;
-      const colorOption = NINE_TOKEN_COLORS.find(
-        c =>
-          c.hex.toLowerCase() === chosenHex.toLowerCase() ||
-          (chosenHex.toLowerCase() === '#777777' && c.hex.toLowerCase() === '#777777ff')
-      );
+      const colorOption = NINE_TOKEN_COLORS.find(c => c.hex.toLowerCase() === normalizeTokenHex(chosenHex));
       const defaultName = isBot ? `Bot ${colorOption?.name || idx + 1}` : `Player ${idx + 1}`;
       const name = playerNames[key] || defaultName;
       const quadrantColor = quadrantColors[idx % quadrantColors.length];
@@ -553,11 +550,7 @@ export const PassNPlayClassicSetupScreen: React.FC<PassNPlayClassicSetupScreenPr
             {Array.from({ length: playerCount }).map((_, idx) => {
               const assignedHex = selectedHexes[idx];
               const colorOption = assignedHex
-                ? NINE_TOKEN_COLORS.find(
-                    c =>
-                      c.hex.toLowerCase() === assignedHex.toLowerCase() ||
-                      (assignedHex.toLowerCase() === '#777777' && c.hex.toLowerCase() === '#777777ff')
-                  )
+                ? NINE_TOKEN_COLORS.find(c => c.hex.toLowerCase() === normalizeTokenHex(assignedHex))
                 : null;
               const key = `p${idx + 1}`;
               const isTargetSlot = activePlayerSlot === idx;
