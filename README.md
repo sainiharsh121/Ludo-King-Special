@@ -1,223 +1,156 @@
-# 4-Player Ludo Engine & App (Classic & Team Up)
+# Ludo — Pass & Play (Classic, Team Up & Quick)
 
-A high-fidelity, deterministic 4-seat Ludo game engine and responsive web application built with **React**, **TypeScript**, **Tailwind CSS**, and **Vite**. Features both **CLASSIC** (every seat for itself) and **TEAM_UP** (2 v 2 cooperative) modes, authentic mobile pacing and physics, seedable deterministic replayability, and procedural Web Audio sound synthesis.
+A mobile-first Ludo game built with **React 19**, **TypeScript**, **Vite 8** and **Tailwind CSS 4**, packaged as a native Android app with **Capacitor 8**.
+Play locally with friends or against bots on one device: **Classic** (every player for themselves), **Team Up** (2 v 2) and **Quick** (fast, capture-to-unlock variant), with board hazards (Freeze Stars & Jump Icons), five token skins, nine player colours, procedural Web Audio sound and 3D dice.
 
----
-
-## 1. Architecture Overview (Part 0)
-
-The game follows a strict, non-negotiable decoupled architecture:
-
-```
-┌────────────────────────────────────────────────────────┐
-│                   State Machine (Pure)                 │
-│      Input: (state, action, rng)                       │
-│      Output: (newState, events[])                      │
-│      - No timers, No I/O, No rendering                 │
-│      - Seedable Mulberry32 PRNG                        │
-│      - 100% Deterministic & Serialisable JSON          │
-└──────────────────────────┬─────────────────────────────┘
-                           │ events[]
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│                 Animation Controller                   │
-│      - Consumes event queue in strict sequence         │
-│      - Logic NEVER waits on rendering                  │
-│      - Frame-calibrated mobile app timings             │
-└──────────────────────────┬─────────────────────────────┘
-                           │ UI & Sound Callbacks
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│                 Visual Presentation                    │
-│      - Scalable vector board & teardrop map-pin tokens │
-│      - 3D tumbling dice cube                           │
-│      - Procedural Web Audio API sound engine           │
-└────────────────────────────────────────────────────────┘
-```
-
-### Event Log Protocol
-Every game step emits typed, serializable domain events:
-- `DICE_ROLLED`
-- `TOKEN_ENTERED`
-- `TOKEN_STEP`
-- `STACK_FORMED`
-- `ENEMY_CAPTURED`
-- `FRIENDLY_CAPTURED`
-- `TOKEN_HOME`
-- `THREE_SIX_FORFEIT`
-- `TURN_PASSED`
-- `BONUS_ROLL`
-- `SEAT_FINISHED`
-- `TEAM_WON`
-- `GAME_OVER`
+> App id `com.mycompany.ludo` · package version `1.2.5` · latest git tag `v1.2.7`
 
 ---
 
-## 2. Configuration (`CFG`) — Single Source of Truth
+## 1. Quick start
 
-All game rules, coordinate offsets, and timing constants live in `src/engine/config.ts`. Modifying any flag changes behavior across the engine without other code edits:
-
-```typescript
-export const DEFAULT_CFG: LudoConfig = {
-  mode: "CLASSIC",              // "CLASSIC" | "TEAM_UP"
-  seats: ["RED","GREEN","YELLOW","BLUE"],   // index 0..3, clockwise
-  seatType: ["HUMAN","BOT","BOT","BOT"],    // every seat is occupied
-  tokensPerSeat: 4,
-  winTokensPerSeat: 4,          // Quick variant: 1 [VERIFY]
-  startRoll: 6,
-  bonusOn: { six: true, enemyCapture: true, tokenHome: true },
-  bonusRollsAccumulate: false,  // one move earns at most ONE extra roll [VERIFY]
-  maxConsecutiveSixes: 3,
-  threeSixPenalty: "FORFEIT_TURN",   // 3rd six is not played
-  mustMoveIfPossible: true,
-  exactRollToHome: true,
-  ringSize: 52,
-  seatStartRing: [0, 13, 26, 39],
-  safeRing: [0, 8, 13, 21, 26, 34, 39, 47],  // 4 start squares + 4 stars
-  stackBlocksCapture: true,     // [VERIFY]
-  stackBlocksPassing: false,    // [VERIFY]
-  friendlyKill: "OFF",          // "OFF" | "PARTNER" | "ALL"
-  friendlyKillGivesBonus: false,
-  teamStackForms: true,         // partner tokens on one square form a stack [VERIFY]
-  partnerControl: "AFTER_FINISH", // "NONE" | "AFTER_FINISH" | "ALWAYS" [VERIFY]
-  teamWin: "ALL_EIGHT_HOME",    // or "EITHER_SEAT_ALL_HOME" [VERIFY]
-  classicEnd: "UNTIL_ALL_RANKED", // or "FIRST_WINNER"
-  firstSeat: "RANDOM",
-  timing: {
-    diceRoll: 800,
-    diceFaceSwap: 70,
-    diceResultHold: 250,
-    tokenStepHop: 180,
-    hopArcHeightCell: 0.3,
-    baseToStart: 300,
-    captureReturn: 500,
-    homeEntry: 300,
-    singleMoveAutoDelay: 300,
-    turnSwitchDelay: 400,
-    botRollDelay: [600, 1000],
-    botPickDelay: [400, 700],
-    turnTimer: 15000,
-    maxAutoPlaysBeforeKick: 3
-  }
-};
-```
-
----
-
-## 3. Assumptions & Default Conventional Behaviors
-
-Listed below are all assumptions made where rules across physical or regional variants vary:
-
-1. **Board Geometry & Seat Indices:**
-   - 4 seats indexed 0..3 clockwise: `0 = RED`, `1 = GREEN`, `2 = YELLOW`, `3 = BLUE`.
-   - Corner bases sit in the 4 corners matching seat order.
-   - Start square ring indices: Red = 0, Green = 13, Yellow = 26, Blue = 39.
-2. **Safe Squares:**
-   - 8 safe squares total: `[0, 8, 13, 21, 26, 34, 39, 47]`.
-   - The 4 starting squares (0, 13, 26, 39) and the 4 star squares (8, 21, 34, 47) are safe for any token. Tokens of any seat or team peacefully coexist on safe squares without capture.
-3. **Discrete Token Progress Scale ($p \in [0, 57]$):**
-   - $p = 0$: In base yard socket.
-   - $p = 1$: Own start square.
-   - $2 \le p \le 51$: Outer ring trajectory. For $1 \le p \le 51$, $\text{ringIndex} = (\text{seatStartRing}[o] + p - 1) \pmod{52}$.
-   - $52 \le p \le 56$: Owner's private coloured home column (5 squares, immune to capture).
-   - $p = 57$: Reached home center podium ($57 - 1 = 56$ total steps from start square).
-4. **Consecutive Sixes & Turn Forfeit:**
-   - `sixesInRow` increments on rolling a 6 and resets on rolling 1..5 or when turn passes.
-   - On the 3rd consecutive 6, no token move is allowed; the dice result is displayed, `THREE_SIX_FORFEIT` is emitted, and the turn passes to the next eligible seat.
-5. **Bonus Roll Cap:**
-   - With `bonusRollsAccumulate = false`, rolling a 6 and landing on an enemy capture grants exactly **one** bonus roll.
-   - Reaching home grants a bonus roll unless it finishes that seat's last token in Classic mode or ends the game.
-6. **Classic Ranking (`classicEnd: "UNTIL_ALL_RANKED"`):**
-   - Ranks 1st, 2nd, and 3rd are assigned as seats finish. When 3 seats have finished, the 4th seat is automatically assigned 4th rank and `GAME_OVER` triggers.
-   - Finished seats are skipped in clockwise turn rotation.
-7. **Team Up Cooperation (Teams $\{0, 2\}$ vs $\{1, 3\}$):**
-   - Opposite seats are partners (Red + Yellow, Green + Blue).
-   - `partnerControl: "AFTER_FINISH"`: A player whose 4 tokens are all home continues rolling on their turns, moving their partner's tokens to maintain team tempo.
-   - `teamWin: "ALL_EIGHT_HOME"`: A team wins when both partner seats have all 4 tokens home (8 tokens total).
-8. **Friendly Kill Modes:**
-   - `"OFF"` (default): Friendly tokens form a stack; no capture, no bonus.
-   - `"PARTNER"`: Partner tokens on non-safe squares are captured; own tokens stack.
-   - `"ALL"`: Both own and partner tokens are captured on non-safe squares.
-   - When a friendly kill is the only legal move, it is forced, and the UI displays a warning badge (⚠️).
-
----
-
-## 4. Verification Registry (`[VERIFY]` Flags)
-
-| Flag | Default Value | Alternatives | Description |
-|---|---|---|---|
-| `winTokensPerSeat` | `4` | `1` (Quick) | Number of home tokens required to finish a seat. |
-| `bonusRollsAccumulate` | `false` | `true` | When false, roll=6 + capture yields 1 bonus roll, not 2. |
-| `stackBlocksCapture` | `true` | `false` | When true, 2+ friendly tokens on an unsafe cell cannot be captured by an enemy. |
-| `stackBlocksPassing` | `false` | `true` | When true, tokens cannot jump over an enemy stack. |
-| `teamStackForms` | `true` | `false` | When true, partner tokens in Team Up form a protective stack. |
-| `partnerControl` | `"AFTER_FINISH"` | `"NONE"`, `"ALWAYS"` | Controls whether finished players roll for their partner. |
-| `teamWin` | `"ALL_EIGHT_HOME"` | `"EITHER_SEAT_ALL_HOME"` | All 8 partner tokens home vs 4 partner tokens home. |
-| `classicEnd` | `"UNTIL_ALL_RANKED"` | `"FIRST_WINNER"` | Plays until 3rd place finishes vs ending on 1st place. |
-
----
-
-## 5. Pacing & Timing Registry (`[EST]` Estimates)
-
-| Parameter | Calibrated Value | Visual Description |
-|---|---|---|
-| `diceRoll` | 800 ms | 3D cube tumbling animation with ease-out deceleration. |
-| `diceFaceSwap` | 70 ms | Frequency of dice pip changes during tumbling. |
-| `diceResultHold` | 250 ms | Pause displaying final roll face before tokens animate. |
-| `tokenStepHop` | 180 ms | Hop time per cell during track traversal. |
-| `hopArcHeightCell` | 0.3 | Vertical parabolic arc height relative to cell dimension. |
-| `baseToStart` | 300 ms | Ease-out slide from base socket onto starting square. |
-| `captureReturn` | 500 ms | Arc return to base yard with bounce on capturer. |
-| `homeEntry` | 300 ms | Home podium scale-up and radial sparkle burst. |
-| `singleMoveAutoDelay` | 300 ms | Automatic move execution delay when only 1 legal move exists. |
-| `turnSwitchDelay` | 400 ms | Delay before transferring active indicator to next player. |
-| `botRollDelay` | [600, 1000] ms | Randomized thinking time for bot dice roll. |
-| `botPickDelay` | [400, 700] ms | Randomized decision time for bot token selection. |
-| `turnTimer` | 15000 ms | Turn countdown for human players. |
-| `maxAutoPlaysBeforeKick` | 3 | Consecutive timeouts before bot AI assumes seat control. |
-
----
-
-## 6. Acceptance Testing & Verification
-
-### Run Acceptance Tests
 ```bash
-npx tsx tests/engine_acceptance.test.ts
+npm install
+npm run dev          # Vite dev server on http://localhost:5173 (also exposed on your LAN with --host)
+npm test             # full automated test suite (~2,500 assertions)
+npm run build        # type-check (tsc) + production bundle in dist/
+npm run preview      # serve the production bundle locally
 ```
-Covers:
-- Timing equation verification ($800 + 250 + 6 \times 180 = 2130$ ms).
-- Sequence 6, 6, 6 turn forfeit.
-- 6 that also captures yields exactly 1 bonus roll.
-- Overshoot rejection at $p=55$ and home entry at $p=57$.
-- Safe ring immunity across all 8 safe squares.
-- Enemy stack protection vs non-stack capture.
-- `friendlyKill` modes: `"OFF"`, `"PARTNER"`, and `"ALL"`.
-- Forced friendly kill with warning badge.
-- `stackBlocksPassing` intermediate path checks.
-- Classic 1st–4th podium ranking.
-- Team Up 8-token victory condition.
-- Seeded Mulberry32 determinism: same seed + same actions $\to$ 100% identical event logs and round-tripped JSON state.
 
-### Run 10,000 Games Simulation
+### Build the Android APK (no Android Studio required)
+
+Requires a JDK (17+) and the Android SDK (`android/local.properties` → `sdk.dir`).
+
 ```bash
-npx tsx tests/simulate_10000.ts
-```
-Simulates 10,000 complete 4-bot Classic games and 10,000 complete 4-bot Team Up games:
-- **Zero deadlocks (100% completion rate).**
-- Balanced win distributions across seats and teams.
-- Performance: ~1,000 turns/sec in pure engine execution.
-
----
-
-## 7. Development & Production Build
-```bash
-# Start Vite development server
-npm run dev
-
-# Run comprehensive test suite
-npm test
-
-# Type-check and build production bundle
 npm run build
+npx cap sync android
+cd android
+./gradlew assembleDebug          # Windows PowerShell: .\gradlew.bat assembleDebug
 ```
 
+Output: `android/app/build/outputs/apk/debug/app-debug.apk` (debug-signed, installable directly or via `adb install -r`).
+Bump `versionCode` in `android/app/build.gradle` before installing over an existing build. A Play Store release needs a signed release build (keystore) — not set up yet.
+
+---
+
+## 2. What is in the app
+
+| Area | Details |
+|---|---|
+| **Modes** | Pass & Play → **Classic**, **Team Up (2v2)**, **Quick**. Online, Friends, Vs Computer, Tournament and the Dice Cup mini-game are visible on the home screen but **locked**. |
+| **Players** | 2, 3 or 4 players; any seat can be a bot. |
+| **Tokens** | 5 skins: `pin`, `disc`, `hammer`, `top`, `ninja`. The **pin** token has a pedestal ring made of 8 segments that **rotates on its owner's turn**. |
+| **Colours** | 9-colour palette: Gold `#ffd700`, Silver `#c0c0c0`, Red `#ff0000`, Blue `#3a72db`, Pink `#ff69b4`, Yellow `#ffff00`, Green `#78f62f`, Purple `#af27d7`, Cyan `#00ffff`. Chosen colours recolour the player's yard, home column and tokens. |
+| **Board themes** | Classic King, Rich Mahogany, Royal Sapphire, Neon. |
+| **Hazards** | 4 **Freeze Stars** and 4 **Jump Icons** on ordinary track cells, relocating/respawning every 2–3 minutes. |
+| **Audio / visuals** | Procedural Web Audio sound effects, 3D tumbling dice, confetti podium, parabolic token hops (210 ms per cell). |
+| **Persistence** | Manual saved games, remembered preferences. **Every app launch starts a fresh game** (see §4). |
+
+---
+
+## 3. Rules as implemented (summary)
+
+Full, code-verified specifications live in [`session-compact/`](session-compact):
+[`classic_mode_rules.md`](session-compact/classic_mode_rules.md) (Classic, plus shared mechanics) · [`teamup-rules.md`](session-compact/teamup-rules.md) · [`version1.2.md`](session-compact/version1.2.md) (changelog / status).
+
+- **Leaving the yard:** roll a `6` (Classic/Team Up). The token lands on its start square.
+- **Dice:** fresh rolls are weighted towards sixes (≈ 22–35 % chance of a 6). **At most two sixes in a row** — after two, the third roll is forced to `1–5`.
+- **Bonus roll** (one per move; priority capture > home > six): capturing an enemy, reaching home, or rolling a six. A roll with no legal move passes the turn (no bonus, even on a six).
+- **Capture:** land on a non-safe cell holding an opponent. Safe cells: the 4 start squares and 4 star squares (`0, 8, 13, 21, 26, 34, 39, 47`). No blockades/stacks.
+- **Home:** the exact roll is required to finish. Classic tokens may enter the home column freely; **Quick Mode** locks the column until the player's first capture (tokens circle the track meanwhile).
+- **Freeze Star ❄️:** the token that lands on one is frozen for a turn and can be captured even on a safe square. **Jump Icon ⚡:** hops the token 1–5 cells (the first two icons may push backward); a forward jump that crosses the home-column entrance carries the token into its column.
+- **Ranks:** players finish one by one; finished players are skipped. The match ends when one player remains.
+- **Team Up:** Team A = seats 1 & 3, Team B = seats 2 & 4. A player who has finished keeps rolling and moves their partner's tokens; the team wins when all 8 tokens are home. A losing-team penalty task can be selected before the match.
+
+---
+
+## 4. Persistence & app launch behaviour
+
+- Starting the app (or reloading the page) **always begins a new game**: the unfinished match, the remembered screen and any stale URL hash are discarded (`resetSessionOnLaunch()` in `src/App.tsx`).
+- Backgrounding and resuming the app does **not** reload the page, so a running match continues.
+- Kept across launches: manually **saved games** (Saved Games modal), the "splash seen" flag (the splash only shows on the very first launch) and preferences such as the token skin and last-used colours.
+
+---
+
+## 5. Project structure
+
+```
+src/
+  App.tsx                    Match state, turn loop, bots, hazards timers, routing between screens
+  components/
+    LudoBoard.tsx            15×15 board, yards, home columns, tokens layer, hazards
+    TokenPreviewSVG.tsx      5 token skins, 9-colour palette (NINE_TOKEN_COLORS), pin ring animation
+    Dice3D.tsx, PlayerHUD.tsx, GameOverModal.tsx, SetupModal.tsx, ThemesModal.tsx, ...
+    HomeScreen.tsx, SplashScreen.tsx, PassNPlay*SetupScreen.tsx, TeamUpTaskSelectionScreen.tsx
+  utils/
+    gameRulesEngine.ts       ← the rules the game actually runs on (legal moves, captures, bonuses, jumps)
+    boardCoordinates.ts      52-cell track, home columns, hazard cells, step → grid coordinates
+    soundEngine.ts, audioAssets.ts, savedGamesEngine.ts
+  types/ludo.ts              Player, Pawn, GameRules, screens, modes
+  engine/                    Standalone deterministic engine (see §7) — not wired into the UI
+  index.css                  Design tokens in :root (colours), keyframes, board/HUD styling
+android/                     Capacitor Android project
+tests/, test_game_logic.ts   Test scripts (run with tsx)
+session-compact/             Design notes, rule specs and version history
+```
+
+**Changing colours:** board and UI colours are CSS variables in `src/index.css` (`:root`); the nine player token colours are `NINE_TOKEN_COLORS` in `src/components/TokenPreviewSVG.tsx`. Colours saved by older versions are migrated by `normalizeTokenHex()`. Source files outside those two places must not contain raw hex codes (a test enforces this for the board, HUD and game-over modal).
+
+### Step scale used by the live game
+
+| `step` | Meaning |
+|---|---|
+| `-1` | In the yard |
+| `0` | Own start square |
+| `1 … 50` | Shared track |
+| `51 … 55` | Private home column |
+| `56` | Home (finished) |
+
+---
+
+## 6. Tests
+
+`npm test` runs every suite below with `tsx` (no test framework); each prints `✅ PASS` lines and exits non-zero on failure.
+
+| Suite | Covers |
+|---|---|
+| `test_game_logic.ts` | Setup flows, colour pickers, persistence, board maths, Team Up logic |
+| `tests/dice_and_movement_rules.test.ts` | Dice, movement, home entry, hazards, Quick Mode |
+| `tests/senior_rules_update.test.ts` | Two-six cap, overshoot rule, Team Up roll transfer, hazard timing |
+| `tests/three_sixes_rule.test.ts` | Regression: a third consecutive six can never appear |
+| `tests/jump_into_home_column.test.ts` | Jump Icon beside the home column |
+| `tests/fresh_start_on_launch.test.ts` | Fresh game on every launch |
+| `tests/pin_ring_spin.test.ts` | Pin token ring gaps and rotation |
+| `tests/token_skins_and_freeze_capture.test.ts`, `two_player_colors.test.ts` | Skins, palette, frozen-token capture, empty-quadrant colours |
+| `tests/contrast_acceptance.test.ts` | WCAG contrast, no raw hex in components |
+| `tests/celebration_and_rank_board.test.ts`, `dice_and_token_sound.test.ts` | Rankings/rematch, audio assets |
+| `tests/engine_acceptance.test.ts`, `tests/simulate_10000.ts` | The standalone `src/engine` (see §7) |
+
+Single suites: `npm run test:rules`, `test:contrast`, `test:engine`, `test:simulate`.
+
+---
+
+## 7. Standalone deterministic engine (`src/engine/`)
+
+`src/engine/` is a separate, fully **pure and seedable** 4-seat engine kept as a reference implementation and test bed. **The UI does not use it** (the app only imports `engine/rng.ts`); the playable game runs on `utils/gameRulesEngine.ts` + `App.tsx`. Its step scale is `0 … 57` and its timings in `config.ts` are independent of the app's.
+
+```
+(state, action, rng) ──► State machine (pure, JSON-serialisable) ──► events[]
+                                                                      │
+                                       Animation controller (consumes events in order)
+```
+
+- Mulberry32 PRNG (`rng.ts`), typed domain events (`DICE_ROLLED`, `TOKEN_STEP`, `ENEMY_CAPTURED`, `TOKEN_HOME`, `THREE_SIX_FORFEIT`, `SEAT_FINISHED`, `TEAM_WON`, `GAME_OVER`, …), bot AI, and a `CFG` object (`config.ts`) holding every rule flag (stacks, friendly kill, team win, three-six penalty, …).
+- Verified by `tests/engine_acceptance.test.ts` and `tests/simulate_10000.ts` (10,000 bot games per mode, no deadlocks).
+- Differences from the live game: forfeit-on-third-six instead of the forced `1–5`, fair dice, stacks that block capture, no hazards.
+
+If you want the app to run on this engine, the live rules would need to be ported to it (or vice-versa) — see "Known gaps" below.
+
+---
+
+## 8. Known gaps
+
+- Two rule implementations exist (live game vs `src/engine`); they are not kept in sync.
+- Gameplay randomness (dice, hazard placement, jump size, bots) uses `Math.random`/an unseeded PRNG, so live games are not replayable.
+- `App.tsx` (~1,700 lines) holds the whole turn loop with chained timeouts; it has no UI-level tests (tests mostly assert on the rules engine and on source text).
+- Android: debug-signed builds only; `package.json`/`versionName` (`1.2.5`) lag behind the git tags (`v1.2.7`).
