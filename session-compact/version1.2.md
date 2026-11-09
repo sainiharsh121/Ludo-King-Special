@@ -1,7 +1,7 @@
 # Ludo King: Version 1.2 — Milestone Architecture & Status Report
 
 > **Document Location:** `session-compact/version1.2.md`  
-> **Release Version:** 1.2.x (latest git tag `v1.2.7`; `package.json` still reads `1.2.5` - bump it on the next release)  
+> **Release Version:** 1.2.8 (git tag `v1.2.8`; `package.json`, Android `versionName` 1.2.8 / `versionCode` 4, splash badge `v1.2.8`)  
 > **Git Repository:** `https://github.com/sainiharsh121/Ludo-King-Special.git`  
 > **Date:** November 2026 (last updated 2026-11-09)  
 > **Workspace:** `E:\ludo_new`  
@@ -103,7 +103,11 @@ All test suites pass with 100% success rate:
 - **Token sizes are shared by all modes** (Classic, Team Up, Quick use the same `LudoBoard`).
 - **Docs:** new `classic_mode_rules.md` (rules as implemented, previously unwritten); the old `classic-rules.md` was removed in favour of it; stale values corrected in `teamup-rules.md`, `08-...md`, `version1.1.md`, `01-setup.md`.
 
-## 7. Known Architecture Notes
+## 7. Release 1.2.8 (2026-11-09)
+
+Collects everything in section 6 (three-sixes fix, jump-into-home-column, fresh game on launch, new palette, larger tokens, rotating pin ring, new docs/README). Versions aligned everywhere: `package.json` 1.2.8, Android `versionName` 1.2.8 / `versionCode` 4, splash screen badge `v1.2.8`.
+
+## 8. Known Architecture Notes
 
 - The playable game runs on `src/utils/gameRulesEngine.ts` + `src/App.tsx`. `src/engine/` (seeded 0..57 event engine from `README.md`) and its tests (`engine_acceptance`, `simulate_10000`) are **not used by the UI**.
 - Randomness in the live game (`Math.random`, unseeded PRNG) is not replayable.
