@@ -393,12 +393,19 @@ export const App: React.FC = () => {
       const hasReadyFreeze = currentFreezeTimes.some(t => t <= now);
       const isJumpReady = currentJumpTimes.some(t => t <= now);
 
+      // Working copies: every step below sees the positions produced by the previous step,
+      // so a Freeze Star and a Jump Icon can never be placed on the same cell in one tick
+      // (the refs only refresh after a re-render and would be stale here).
+      let workFreeze = freezeStarIndicesRef.current;
+      let workJump = jumpIconIndicesRef.current;
+      let hazardsChanged = false;
+
       if (hasReadyFreeze || isJumpReady) {
         const result = processHazardRespawns(
           {
-            freezeStarIndices: freezeStarIndicesRef.current,
-            jumpIconIndices: jumpIconIndicesRef.current,
-            jumpIconIndex: jumpIconIndicesRef.current[0] ?? null,
+            freezeStarIndices: workFreeze,
+            jumpIconIndices: workJump,
+            jumpIconIndex: workJump[0] ?? null,
             freezeStarRespawnTimes: currentFreezeTimes,
             jumpIconRespawnTimes: currentJumpTimes,
             jumpIconRespawnTime: currentJumpTimes[0] ?? null,
@@ -406,8 +413,9 @@ export const App: React.FC = () => {
           now
         );
 
-        setFreezeStarIndices(result.nextState.freezeStarIndices);
-        setJumpIconIndices(result.nextState.jumpIconIndices);
+        workFreeze = result.nextState.freezeStarIndices;
+        workJump = result.nextState.jumpIconIndices;
+        hazardsChanged = true;
         setFreezeStarRespawnTimes(result.nextState.freezeStarRespawnTimes);
         setJumpIconRespawnTimes(result.nextState.jumpIconRespawnTimes);
 
@@ -427,13 +435,11 @@ export const App: React.FC = () => {
       );
       if (now - lastFreezeRelocationRef.current >= freezeCycleMs) {
         lastFreezeRelocationRef.current = now;
-        setFreezeStarIndices(current => {
-          if (current.length === 0) return current;
-          const currentJump = jumpIconIndicesRef.current;
-          const newStars = generateRandomHazardIndices(current.length, currentJump);
+        if (workFreeze.length > 0) {
+          workFreeze = generateRandomHazardIndices(workFreeze.length, workJump);
+          hazardsChanged = true;
           setNotification('❄️ Freeze Stars have relocated to new track positions!');
-          return newStars;
-        });
+        }
       }
 
       // 3. Rule 2: Periodic 2-3 minute random relocation cycle for active jump icons
@@ -443,13 +449,19 @@ export const App: React.FC = () => {
       );
       if (now - lastJumpRelocationRef.current >= jumpCycleMs) {
         lastJumpRelocationRef.current = now;
-        setJumpIconIndices(current => {
-          if (current.length === 0) return current;
-          const currentStars = freezeStarIndicesRef.current;
-          const newJump = generateRandomHazardIndices(current.length, currentStars);
+        if (workJump.length > 0) {
+          workJump = generateRandomHazardIndices(workJump.length, workFreeze);
+          hazardsChanged = true;
           setNotification('⚡ Jump Icons have relocated to new track positions!');
-          return newJump;
-        });
+        }
+      }
+
+      if (hazardsChanged) {
+        // Keep the refs in sync immediately so the next tick never reads stale positions
+        freezeStarIndicesRef.current = workFreeze;
+        jumpIconIndicesRef.current = workJump;
+        setFreezeStarIndices(workFreeze);
+        setJumpIconIndices(workJump);
       }
     };
 
@@ -696,13 +708,17 @@ export const App: React.FC = () => {
         outcome.jumpToStep >= 51 &&
         outcome.jumpToStep <= 56
       );
+      // A backward jump must hop back cell by cell. A token that is still circling the track (home locked or
+      // already past the column entrance) may cross the 0 <-> 51 seam while going back.
+      const isJumpBackward = Boolean(outcome.jumpSteps && outcome.jumpSteps < 0);
       const jumpPath = getStepPath(
         controllingPlayer.color,
         outcome.toStep,
         outcome.jumpToStep,
         pawnId,
         isJumpEnteringCorridor,
-        isJumpWrapping
+        isJumpBackward ? (isHomeLocked || isPastEntranceOnTrack) : isJumpWrapping,
+        isJumpBackward
       );
       for (let i = 0; i < jumpPath.length; i++) {
         const targetCoord = jumpPath[i];
@@ -1296,8 +1312,11 @@ export const App: React.FC = () => {
     } else {
       loadedJump = generateRandomHazardIndices(4, loadedFreeze);
     }
-    setFreezeStarIndices(loadedFreeze);
-    setJumpIconIndices(loadedJump);
+    // Drop any duplicate / overlapping hazard cells that an older save may contain
+    const dedupedFreeze = Array.from(new Set(loadedFreeze));
+    const dedupedJump = Array.from(new Set(loadedJump)).filter(idx => !dedupedFreeze.includes(idx));
+    setFreezeStarIndices(dedupedFreeze);
+    setJumpIconIndices(dedupedJump);
     setFreezeStarRespawnTimes(savedGame.freezeStarRespawnTimes || []);
     setJumpIconRespawnTimes(savedGame.jumpIconRespawnTimes || (savedGame.jumpIconRespawnTime !== null && savedGame.jumpIconRespawnTime !== undefined ? [savedGame.jumpIconRespawnTime] : []));
     lastFreezeRelocationRef.current = Date.now();

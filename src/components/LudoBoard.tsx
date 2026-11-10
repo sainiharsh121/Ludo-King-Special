@@ -249,8 +249,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               tokenType={config.player?.tokenId || selectedTokenId || 'pin'}
               color={color}
               customHex={config.player?.tokenColorHex || config.seatColor}
-              className="w-[26px] h-[30px] sm:w-[29px] sm:h-[34px]"
-              spinRing={config.player?.id === (movablePlayerId ?? activePlayer.id) && phase !== 'GAME_OVER'}
+              className="w-[35px] h-[40px] sm:w-[29px] sm:h-[34px]"
+              spinRing={Boolean(isLegal)}
             />
           </div>
         )}
@@ -864,7 +864,15 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
           </div>
         </div>
 
-        {/* ===================== 10. PAWNS LAYER (Absolute Overlay) ===================== */}
+      </div>
+      {/* ^ end of the clipped board grid (background layer: rounded corners + overflow-hidden live here) */}
+
+      {/* ===================== 10. PAWNS LAYER (Absolute Overlay) =====================
+          Rendered OUTSIDE the overflow-hidden grid and above it (z-30), so a token standing on an edge
+          cell (e.g. the top row) is drawn in full instead of being clipped at the board border.
+          The inset equals the wrapper padding (p-1 / sm:p-1.5) + the 3px board border, so the percentage
+          coordinates still line up exactly with the 15x15 grid cells underneath. */}
+      <div className="absolute inset-[7px] sm:inset-[9px] z-30 pointer-events-none">
         <div className="absolute inset-0 pointer-events-none">
           {Object.entries(pawnsByCell).map(([cellKey, items]) => {
             const hasStack = items.length >= 2;
@@ -924,8 +932,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                         tokenType={item.player.tokenId || selectedTokenId || 'pin'}
                         color={item.player.color}
                         customHex={colorHex}
-                        className="w-[27px] h-[31px] sm:w-[31px] sm:h-[36px]"
-                        spinRing={item.player.id === (movablePlayerId ?? activePlayer.id) && phase !== 'GAME_OVER'}
+                        className="w-[36px] h-[42px] sm:w-[31px] sm:h-[36px]"
+                        spinRing={isLegal}
                       />
                     </div>
                   </div>
@@ -960,8 +968,8 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
                     tokenType={animPlayer?.tokenId || selectedTokenId || 'pin'}
                     color={animatingPawn.color}
                     customHex={animPlayer?.tokenColorHex || animHex}
-                    className="w-[27px] h-[31px] sm:w-[31px] sm:h-[36px]"
-                    spinRing={phase !== 'GAME_OVER'}
+                    className="w-[36px] h-[42px] sm:w-[31px] sm:h-[36px]"
+                    spinRing={false}
                   />
                 </div>
               </div>

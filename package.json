@@ -1,13 +1,13 @@
 {
   "name": "ludo_new",
   "private": true,
-  "version": "1.2.8",
+  "version": "1.2.9",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "tsx test_game_logic.ts && tsx tests/engine_acceptance.test.ts && tsx tests/dice_and_movement_rules.test.ts && tsx tests/contrast_acceptance.test.ts && tsx tests/celebration_and_rank_board.test.ts && tsx tests/two_player_colors.test.ts && tsx tests/dice_and_token_sound.test.ts && tsx tests/senior_rules_update.test.ts && tsx tests/token_skins_and_freeze_capture.test.ts && tsx tests/three_sixes_rule.test.ts && tsx tests/jump_into_home_column.test.ts && tsx tests/fresh_start_on_launch.test.ts && tsx tests/pin_ring_spin.test.ts",
+    "test": "tsx test_game_logic.ts && tsx tests/engine_acceptance.test.ts && tsx tests/dice_and_movement_rules.test.ts && tsx tests/contrast_acceptance.test.ts && tsx tests/celebration_and_rank_board.test.ts && tsx tests/two_player_colors.test.ts && tsx tests/dice_and_token_sound.test.ts && tsx tests/senior_rules_update.test.ts && tsx tests/token_skins_and_freeze_capture.test.ts && tsx tests/three_sixes_rule.test.ts && tsx tests/jump_into_home_column.test.ts && tsx tests/fresh_start_on_launch.test.ts && tsx tests/pin_ring_spin.test.ts && tsx tests/hazard_no_overlap.test.ts && tsx tests/token_not_clipped.test.ts",
     "test:rules": "tsx tests/dice_and_movement_rules.test.ts",
     "test:contrast": "tsx tests/contrast_acceptance.test.ts",
     "test:engine": "tsx tests/engine_acceptance.test.ts",

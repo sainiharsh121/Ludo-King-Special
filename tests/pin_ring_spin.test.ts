@@ -27,7 +27,7 @@ check('ring group rotates around the ring centre (14,20) only when spinRing is s
 check('spin phase is shared/global so re-mounted tokens do not restart the rotation', /Date\.now\(\) % PIN_RING_SPIN_MS/.test(svg));
 check('CSS defines the pinRingSpin keyframes (0 -> 360deg, linear, infinite)', /@keyframes pinRingSpin/.test(css) && /rotate\(360deg\)/.test(css) && /\.pin-ring-spin\s*\{[^}]*linear[^}]*infinite/s.test(css));
 check('reduced-motion users get no spinning', /prefers-reduced-motion: reduce\)\s*\{\s*\.pin-ring-spin\s*\{\s*animation: none/.test(css));
-check('board spins rings of the player whose turn it is (static, yard and hopping tokens)', (board.match(/spinRing=/g) || []).length === 3 && /movablePlayerId \?\? activePlayer\.id\) && phase !== 'GAME_OVER'/.test(board));
+check('board spins the ring only on tokens that can legally move (static + yard), never on the hopping clone', (board.match(/spinRing=/g) || []).length === 3 && /spinRing=\{Boolean\(isLegal\)\}/.test(board) && /spinRing=\{isLegal\}/.test(board) && /spinRing=\{false\}/.test(board) && !/spinRing=\{[^}]*activePlayer\.id/.test(board));
 check('HUD pin spins for the active player', /spinRing=\{isActiveTurn/.test(hud));
 
 console.log(`🎉 ALL PIN RING SPIN TESTS PASSED (${passed})`);

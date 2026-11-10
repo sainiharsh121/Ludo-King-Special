@@ -370,12 +370,26 @@ export function getStepPath(
   toStep: number,
   pawnId: number,
   inHomeCorridor: boolean = false,
-  isWrapping: boolean = false
+  isWrapping: boolean = false,
+  isBackward: boolean = false
 ): Coordinate[] {
   const path: Coordinate[] = [];
   if (fromStep === -1) {
     // Exiting base into start tile directly without in-place bounce inside yard socket
     path.push(getPawnCoordinate(color, 0, pawnId, false));
+    return path;
+  }
+
+  // Explicit backward hop (Jump Icon with the backward power). It must walk BACK cell by cell and must never
+  // fall into the forward "perimeter wrap" heuristic below: for a token near the home column (step >= 46) that
+  // heuristic would send it a whole lap around the board and drop it only a few cells behind.
+  // `isWrapping` here means the backward hop may cross the 0 <-> 51 seam (token circling the track).
+  if (isBackward) {
+    const backSteps = isWrapping ? (fromStep - toStep + 52) % 52 : Math.max(0, fromStep - toStep);
+    for (let i = 1; i <= backSteps; i++) {
+      const s = (fromStep - i + 52) % 52;
+      path.push(getPawnCoordinate(color, s, pawnId, false));
+    }
     return path;
   }
 

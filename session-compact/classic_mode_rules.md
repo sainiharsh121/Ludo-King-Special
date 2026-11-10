@@ -172,7 +172,7 @@ Bots do not look at danger, blocks, or hazards beyond what the outcome calculati
 | Token size in yard | `26×30 px` (≥ `sm`: `29×34 px`) |
 | Yard socket | circles shrunk so enlarged tokens sit on a brown ring pedestal |
 | Frozen token | blue glow + `🧊 FROZEN` badge |
-| Pin token ring (skin 1) | Pedestal ring is 8 brown segments with small gaps; it **rotates (one turn / 2.4 s, clockwise)** on every token of the player whose turn it is (board, yard, hopping clone and the HUD pin). Other players' rings stand still; no spin on game over or with reduced-motion. All rings share one global phase so they turn in sync (`PIN_RING_SPIN_MS`, `spinRing` prop in `TokenPreviewSVG.tsx`, `.pin-ring-spin` in `index.css`) |
+| Pin token ring (skin 1) | Pedestal ring is 8 brown segments with small gaps; it **rotates (one turn / 2.4 s, clockwise)** only on the board/yard tokens that can legally move with the current roll (selectable tokens) and on the active player's HUD pin. Every other token's ring stands still (blocked tokens, other players, the hopping clone, game over, reduced-motion). All rings share one global phase so they turn in sync (`PIN_RING_SPIN_MS`, `spinRing` prop in `TokenPreviewSVG.tsx`, `.pin-ring-spin` in `index.css`) |
 | Player colour palette (`NINE_TOKEN_COLORS`, `TokenPreviewSVG.tsx`) | Gold `#ffd700`, Silver `#c0c0c0`, Red `#ff0000`, Blue `#3a72db`, Pink `#ff69b4`, Yellow `#ffff00`, Green `#78f62f`, Purple `#af27d7`, Cyan `#00ffff` (Black was replaced by Cyan) |
 | Board default seat colours (`index.css` `:root`) | unchanged: `--seat-green` is still `#008000` (used only when a player has no custom colour; contrast tests rely on it) |
 

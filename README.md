@@ -3,7 +3,7 @@
 A mobile-first Ludo game built with **React 19**, **TypeScript**, **Vite 8** and **Tailwind CSS 4**, packaged as a native Android app with **Capacitor 8**.
 Play locally with friends or against bots on one device: **Classic** (every player for themselves), **Team Up** (2 v 2) and **Quick** (fast, capture-to-unlock variant), with board hazards (Freeze Stars & Jump Icons), five token skins, nine player colours, procedural Web Audio sound and 3D dice.
 
-> App id `com.mycompany.ludo` · version `1.2.8` (`versionCode` 4)
+> App id `com.mycompany.ludo` · version `1.2.9` (`versionCode` 5)
 
 ---
 

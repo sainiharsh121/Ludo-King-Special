@@ -1,7 +1,7 @@
 # Ludo King: Version 1.2 — Milestone Architecture & Status Report
 
 > **Document Location:** `session-compact/version1.2.md`  
-> **Release Version:** 1.2.8 (git tag `v1.2.8`; `package.json`, Android `versionName` 1.2.8 / `versionCode` 4, splash badge `v1.2.8`)  
+> **Release Version:** 1.2.9 (`package.json`, Android `versionName` 1.2.9 / `versionCode` 5, splash badge `v1.2.9`)  
 > **Git Repository:** `https://github.com/sainiharsh121/Ludo-King-Special.git`  
 > **Date:** November 2026 (last updated 2026-11-09)  
 > **Workspace:** `E:\ludo_new`  
@@ -107,7 +107,16 @@ All test suites pass with 100% success rate:
 
 Collects everything in section 6 (three-sixes fix, jump-into-home-column, fresh game on launch, new palette, larger tokens, rotating pin ring, new docs/README). Versions aligned everywhere: `package.json` 1.2.8, Android `versionName` 1.2.8 / `versionCode` 4, splash screen badge `v1.2.8`.
 
-## 8. Known Architecture Notes
+## 8. Release 1.2.9 (2026-11-10)
+
+- **Mobile token size:** board tokens are larger on phones (track and hopping pawns 36 x 42 px, yard pawns 35 x 40 px; `sm:` sizes unchanged).
+- **Pin ring spin:** the pedestal ring now rotates only on tokens that can legally move with the current roll (board and yard). Blocked tokens, other players' tokens and the hopping clone keep a still ring. The HUD pin still spins for the active player.
+- **Hazard overlap fix:** a Freeze Star and a Jump Icon can no longer land on the same cell. The periodic relocation tick now works on fresh local positions instead of stale refs, and saved games drop overlapping hazard cells on load.
+- **Backward jump near the home column:** a backward Jump Icon hop from a cell close to the home column was animated as a full lap around the board. `getStepPath` now has an explicit `isBackward` mode that hops back cell by cell. Forward jumps that cross the column entrance already enter the column and are covered by tests.
+- **Tests:** new `tests/hazard_no_overlap.test.ts`, extended `tests/jump_into_home_column.test.ts`, updated `tests/pin_ring_spin.test.ts`.
+- **Versions:** `package.json` 1.2.9, Android `versionName` 1.2.9 / `versionCode` 5, splash badge `v1.2.9`.
+
+## 9. Known Architecture Notes
 
 - The playable game runs on `src/utils/gameRulesEngine.ts` + `src/App.tsx`. `src/engine/` (seeded 0..57 event engine from `README.md`) and its tests (`engine_acceptance`, `simulate_10000`) are **not used by the UI**.
 - Randomness in the live game (`Math.random`, unseeded PRNG) is not replayable.
